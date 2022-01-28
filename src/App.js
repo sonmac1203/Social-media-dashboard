@@ -21,7 +21,7 @@ function App() {
 
   return (
     <div>
-      <NavBar></NavBar>
+      <NavBar />
     </div>
   );
 }

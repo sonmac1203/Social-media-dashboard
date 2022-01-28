@@ -4,8 +4,7 @@ import { Col, Card, Button } from 'react-bootstrap';
 const Profile = ({ name, iconName }) => {
   return (
     <Col xl='3'>
-      <Card style={{ width: '18rem' }}>
-        {/* <Card.Img variant='top' src='holder.js/100px180' /> */}
+      <Card style={{ width: '260px' }}>
         <Card.Body>
           <Card.Title>
             <div>
@@ -14,7 +13,7 @@ const Profile = ({ name, iconName }) => {
             <div>{name}</div>
           </Card.Title>
           <Card.Text>Connect to your {name} profile</Card.Text>
-          <Button variant='primary'>Add Profile</Button>
+          <Button variant='primary'>Add</Button>
         </Card.Body>
       </Card>
     </Col>

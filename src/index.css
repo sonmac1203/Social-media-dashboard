@@ -7,7 +7,15 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+.tab-column {
+  min-height: 100vh;
+  min-width: 10px;
+  border: 1px solid #dee2e6;
+  border-top: none;
+  border-left: none;
+  padding-right: 0;
+}
+
+.nav-link {
+  color: black;
 }

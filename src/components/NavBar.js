@@ -1,23 +1,21 @@
 import React from 'react';
 import { Tabs, Tab } from 'react-bootstrap';
-import Profiles from './Profiles';
+import Sidebar1 from './Sidebar1';
+import Sidebar2 from './SideBar2';
 
 const NavBar = () => {
   return (
     <div>
       <Tabs
-        defaultActiveKey='profile'
+        defaultActiveKey='home'
         id='uncontrolled-tab-example'
-        className='mb-3'
+        className='d-flex justify-content-center'
       >
-        <Tab eventKey='home' title='Profiles'>
-          <Profiles />
+        <Tab eventKey='home' title='PROFILES'>
+          <Sidebar1 />
         </Tab>
-        <Tab eventKey='profile' title='Posts'>
-          <h1>HIHIHI</h1>
-        </Tab>
-        <Tab eventKey='contact' title='Contact' disabled>
-          <h1>HUHUHU</h1>
+        <Tab eventKey='management' title='MANAGEMENT'>
+          <Sidebar2 />
         </Tab>
       </Tabs>
     </div>
