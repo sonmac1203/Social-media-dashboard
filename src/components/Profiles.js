@@ -1,15 +1,18 @@
 import React from 'react';
 import { Container, Row } from 'react-bootstrap';
-import Profile from './Profile';
+import Facebook from '../profiles/Facebook';
+import Google from '../profiles/Google';
+import Instagram from '../profiles/Instagram';
+import Yelp from '../profiles/Yelp';
 
 const Profiles = () => {
   return (
     <Container className='mt-5'>
       <Row>
-        <Profile name='Facebook' iconName='fab fa-facebook-square' />
-        {/* <Profile name='Instagram' iconName='fab fa-instagram' />
-        <Profile name='Google' iconName='fas fa-user-tie' />
-        <Profile name='Yelp' iconName='fab fa-yelp' /> */}
+        <Facebook />
+        <Instagram />
+        <Google />
+        <Yelp />
       </Row>
     </Container>
   );
