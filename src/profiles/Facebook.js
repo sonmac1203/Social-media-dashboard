@@ -6,7 +6,6 @@ import axios from 'axios';
 const Facebook = () => {
   const [login, setLogin] = useState(false);
   const [data, setData] = useState({});
-  const [picture, setPicture] = useState('');
   const [shortToken, setShortToken] = useState('');
   const [longToken, setLongToken] = useState('');
   const [userID, setUserID] = useState('');
