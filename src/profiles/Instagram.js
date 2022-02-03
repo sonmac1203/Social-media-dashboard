@@ -1,60 +1,45 @@
-import React, { useState, useEffect } from 'react';
-import { Col, Card, Button, Form } from 'react-bootstrap';
+import React, { useEffect } from 'react';
+import { Col, Card, Button } from 'react-bootstrap';
 import FacebookLogin from 'react-facebook-login/dist/facebook-login-render-props';
 import axios from 'axios';
 
-const Instagram = () => {
-  const [login, setLogin] = useState(false);
-  const [data, setData] = useState({});
-  const [userToken, setUserToken] = useState('');
-  const [pageID, setPageID] = useState('');
-  const [content, setContent] = useState('');
-  const [photo, setPhoto] = useState();
-  const [instaPageID, setInstaPageID] = useState('');
-  const [containerID, setContainerID] = useState('');
-
+const Instagram = ({ insta, setInsta }) => {
   const responseFacebook = (response) => {
-    setData(response);
-    setUserToken(response.accessToken);
     console.log(response);
     if (response.accessToken) {
-      setLogin(true);
+      setInsta({ ...insta, login: true, userToken: response.accessToken });
     } else {
-      setLogin(false);
+      setInsta({ ...insta, login: false });
     }
   };
 
+  const { login, userToken } = insta;
   useEffect(() => {
     if (login) {
       (async () => {
         const firstResponse = await axios.get(
-          `https://graph.facebook.com/v12.0/me/accounts?access_token=${userToken}`
+          'https://graph.facebook.com/v12.0/me/accounts',
+          { params: { access_token: userToken } }
         );
-
+        console.log(firstResponse.data.data);
         const secondResponse = await axios.get(
-          `https://graph.facebook.com/v12.0/${firstResponse.data.data[0].id}?fields=instagram_business_account&access_token=${userToken}`
+          `https://graph.facebook.com/v12.0/${firstResponse.data.data[0].id}`,
+          {
+            params: {
+              fields: 'instagram_business_account',
+              access_token: userToken,
+            },
+          }
         );
-        console.log(firstResponse.data.data[0].id);
-        console.log(secondResponse.data.instagram_business_account.id);
-        setPageID(firstResponse.data.data[0].id);
-        setInstaPageID(secondResponse.data.instagram_business_account.id);
+        console.log(secondResponse.data.id);
+        setInsta({
+          ...insta,
+          pageID: secondResponse.data.instagram_business_account.id,
+          // pageID: secondResponse.data.id,
+        });
       })();
     }
   }, [login, userToken]);
-
-  const postContent = async () => {
-    const firstResponse = await axios.post(
-      `https://graph.facebook.com/v12.0/${instaPageID}/media?image_url=https://www.sonmac.me/static/media/zendesk.05cc2e8250df4a92ea6c.jpg&caption=${content}&access_token=${userToken}`
-    );
-
-    const secondResponse = await axios
-      .post(
-        `https://graph.facebook.com/${instaPageID}/media_publish?creation_id=${firstResponse.data.id}&access_token=${userToken}`
-      )
-      .then(() => {
-        alert('SUCCESS!!!');
-      });
-  };
 
   return (
     <Col xl='3'>
@@ -82,19 +67,6 @@ const Instagram = () => {
           {login && <Button disabled>Added</Button>}
         </Card.Body>
       </Card>
-      <Form className='mt-5'>
-        <Form.Group className='mb-3' controlId='testform'>
-          <Form.Control
-            as='textarea'
-            placeholder='Enter your content'
-            rows='3'
-            onChange={(e) => setContent(e.target.value)}
-          />
-        </Form.Group>
-        <Button variant='primary' onClick={() => postContent()}>
-          Submit
-        </Button>
-      </Form>
     </Col>
   );
 };

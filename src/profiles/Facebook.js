@@ -1,60 +1,51 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import FacebookLogin from 'react-facebook-login/dist/facebook-login-render-props';
-import { Col, Card, Button, Form } from 'react-bootstrap';
+import { Col, Card, Button } from 'react-bootstrap';
 import axios from 'axios';
 
-const Facebook = () => {
-  const [login, setLogin] = useState(false);
-  const [data, setData] = useState({});
-  const [shortToken, setShortToken] = useState('');
-  const [longToken, setLongToken] = useState('');
-  const [userID, setUserID] = useState('');
-  const [pageLongToken, setPageLongToken] = useState('');
-  const [pageID, setPageID] = useState('');
-  const [content, setContent] = useState('');
-
+const Facebook = ({ fb, setFb }) => {
   const responseFacebook = (response) => {
-    setData(response);
-    setShortToken(response.accessToken);
     if (response.accessToken) {
-      setLogin(true);
+      setFb({
+        ...fb,
+        login: true,
+        shortToken: response.accessToken,
+        userID: response.userID,
+      });
     } else {
-      setLogin(false);
+      setFb({ ...fb, login: false });
     }
   };
 
+  const { login, shortToken, userID } = fb;
   useEffect(() => {
     if (login) {
       (async () => {
         const firstResponse = await axios.get(
-          `https://graph.facebook.com/v12.0/oauth/access_token?grant_type=fb_exchange_token&client_id=${process.env.REACT_APP_FACEBOOK_ID}&client_secret=${process.env.REACT_APP_FACEBOOK_SECRET}&fb_exchange_token=${shortToken}`
+          'https://graph.facebook.com/v12.0/oauth/access_token',
+          {
+            params: {
+              grant_type: 'fb_exchange_token',
+              client_id: process.env.REACT_APP_FACEBOOK_ID,
+              client_secret: process.env.REACT_APP_FACEBOOK_SECRET,
+              fb_exchange_token: shortToken,
+            },
+          }
         );
 
         const secondResponse = await axios.get(
-          `https://graph.facebook.com/v12.0/me?access_token=${firstResponse.data.access_token}`
+          `https://graph.facebook.com/${userID}/accounts`,
+          { params: { access_token: firstResponse.data.access_token } }
         );
 
-        const thirdResponse = await axios.get(
-          `https://graph.facebook.com/${secondResponse.data.id}/accounts?access_token=${firstResponse.data.access_token}`
-        );
-
-        setLongToken(firstResponse.data.access_token);
-        setUserID(secondResponse.data.id);
-        setPageLongToken(thirdResponse.data.data[0].access_token);
-        setPageID(thirdResponse.data.data[0].id);
+        setFb({
+          ...fb,
+          pageID: secondResponse.data.data[0].id,
+          pageLongToken: secondResponse.data.data[0].access_token,
+        });
       })();
     }
   }, [login, shortToken]);
-
-  const postContent = () => {
-    axios
-      .post(
-        `https://graph.facebook.com/${pageID}/feed?message=${content}&access_token=${pageLongToken}`
-      )
-      .then(() => {
-        alert('SUCCESS!!!');
-      });
-  };
 
   return (
     <Col xl='3'>
@@ -82,19 +73,6 @@ const Facebook = () => {
           {login && <Button disabled>Added</Button>}
         </Card.Body>
       </Card>
-      <Form className='mt-5'>
-        <Form.Group className='mb-3' controlId='testform'>
-          <Form.Control
-            as='textarea'
-            placeholder='Enter your content'
-            rows='3'
-            onChange={(e) => setContent(e.target.value)}
-          />
-        </Form.Group>
-        <Button variant='primary' onClick={() => postContent()}>
-          Submit
-        </Button>
-      </Form>
     </Col>
   );
 };
