@@ -19,3 +19,7 @@ body {
 .nav-link {
   color: black;
 }
+
+i {
+  font-size: 30px;
+}

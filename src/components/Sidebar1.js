@@ -40,9 +40,6 @@ const Sidebar = () => {
               <Nav.Item>
                 <Nav.Link eventKey='second'>Profiles</Nav.Link>
               </Nav.Item>
-              <Nav.Item>
-                <Nav.Link eventKey='third'>Compose</Nav.Link>
-              </Nav.Item>
             </Nav>
           </Col>
           <Col sm='10'>

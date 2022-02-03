@@ -9,18 +9,20 @@ import InputModal from './InputModal';
 const Connect = ({ fb, setFb, insta, setInsta, content, setContent }) => {
   return (
     <Container className='mt-5'>
+      <div className='d-flex justify-content-center mb-5'>
+        <InputModal
+          fb={fb}
+          insta={insta}
+          content={content}
+          setContent={setContent}
+        />
+      </div>
       <Row>
         <Facebook fb={fb} setFb={setFb} />
         <Instagram insta={insta} setInsta={setInsta} />
         <Google />
         <Yelp />
       </Row>
-      <InputModal
-        fb={fb}
-        insta={insta}
-        content={content}
-        setContent={setContent}
-      />
     </Container>
   );
 };
