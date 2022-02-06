@@ -23,3 +23,29 @@ body {
 i {
   font-size: 30px;
 }
+
+.compose-input {
+  position: relative;
+  height: fit-content;
+}
+
+.compose-input-button {
+  position: absolute;
+  font-size: 22px;
+  bottom: 0;
+  margin-left: 12px;
+  padding-bottom: 10px;
+}
+
+.compose-input-photo {
+  position: absolute;
+  bottom: 0;
+  margin-left: 12px;
+  margin-bottom: 50px;
+  height: 85px;
+  border-radius: 8px;
+}
+
+.upload-preview-photo {
+  height: 100px;
+}

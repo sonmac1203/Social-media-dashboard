@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Form, Button, Modal, DropdownButton, Dropdown } from 'react-bootstrap';
 import axios from 'axios';
+import MediaUpload from './MediaUpload';
 
 const InputModal = ({ fb, insta, content, setContent }) => {
   const { pageID: fbPageID, pageLongToken, login: fbLogin } = fb;
@@ -8,11 +9,18 @@ const InputModal = ({ fb, insta, content, setContent }) => {
 
   const [show, setShow] = useState(false);
 
-  const handleClose = () => setShow(false);
+  const handleClose = () => {
+    setShow(false);
+    setImageUrl('');
+  };
   const handleShow = () => setShow(true);
 
   const [instaChosen, setInstaChosen] = useState(false);
   const [fbChosen, setFbChosen] = useState(false);
+
+  const [imageUrl, setImageUrl] = useState('');
+
+  const [rows, setRows] = useState(5);
 
   const toggleInsta = () => {
     setInstaChosen(!instaChosen);
@@ -22,12 +30,31 @@ const InputModal = ({ fb, insta, content, setContent }) => {
     setFbChosen(!fbChosen);
   };
 
+  useEffect(() => {
+    if (imageUrl) {
+      setRows(9);
+      console.log(imageUrl);
+    } else {
+      setRows(5);
+    }
+  }, [imageUrl]);
+
   const postContent = async () => {
     if (fbLogin && fbChosen) {
       axios
-        .post(`https://graph.facebook.com/${fbPageID}/feed`, null, {
-          params: { message: content, access_token: pageLongToken },
-        })
+        .post(
+          `https://graph.facebook.com/${fbPageID}/${
+            imageUrl ? 'photos' : 'feed'
+          }`,
+          null,
+          {
+            params: {
+              url: `${imageUrl ? imageUrl : ''}`,
+              message: content,
+              access_token: pageLongToken,
+            },
+          }
+        )
         .then(() => {
           alert('FACEBOOK UPLOAD SUCCESS!!!');
         });
@@ -61,10 +88,9 @@ const InputModal = ({ fb, insta, content, setContent }) => {
 
   return (
     <div>
-      <Button variant='primary' onClick={handleShow}>
-        Compose
+      <Button variant='primary' onClick={handleShow} className='mb-5'>
+        COMPOSE
       </Button>
-
       <Modal
         show={show}
         onHide={handleClose}
@@ -80,23 +106,26 @@ const InputModal = ({ fb, insta, content, setContent }) => {
             {fbChosen && <i className='fab fa-facebook me-2'></i>}
             {instaChosen && <i className='fab fa-instagram me-2'></i>}
           </div>
-          <Form>
-            <Form.Group className='mb-3' controlId='testform'>
-              <Form.Control
-                as='textarea'
-                placeholder='Enter your content'
-                rows='5'
-                onChange={(e) => setContent(e.target.value)}
-              />
-            </Form.Group>
-          </Form>
+          <div className='compose-input'>
+            <Form>
+              <Form.Group className='mb-3' controlId='testform'>
+                <Form.Control
+                  as='textarea'
+                  placeholder='Enter your content'
+                  rows={rows}
+                  onChange={(e) => setContent(e.target.value)}
+                />
+              </Form.Group>
+            </Form>
+            {imageUrl && <img className='compose-input-photo' src={imageUrl} />}
+            <MediaUpload setImageUrl={setImageUrl} />
+          </div>
         </Modal.Body>
         <Modal.Footer className='d-flex justify-content-between'>
           <DropdownButton id='dropdown-basic-button' title='Choose a profile'>
             {!fbLogin && !instaLogin && (
               <Dropdown.Item disabled>Not found</Dropdown.Item>
             )}
-
             {fbLogin && (
               <Dropdown.Item onClick={toggleFb}>Facebook</Dropdown.Item>
             )}
