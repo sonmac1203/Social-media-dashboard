@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { Modal, Button, Tabs, Tab } from 'react-bootstrap';
+import { storage } from '../firebase/firebase';
+import { ref, uploadBytesResumable, getDownloadURL } from '@firebase/storage';
 
-const MediaUpload = ({ setImageUrl }) => {
+const MediaUpload = ({ setImageUrl, setFakeImageUrl, setProgress }) => {
   const [show, setShow] = useState(false);
   const handleShow = () => setShow(true);
   const [selectedImage, setSelectedImage] = useState(null);
@@ -10,10 +12,30 @@ const MediaUpload = ({ setImageUrl }) => {
     setShow(false);
     setSelectedImage(null);
   };
-  const handleSave = () => {
+  const handleSave = async (e) => {
     setShow(false);
     if (selectedImage) {
-      setImageUrl(URL.createObjectURL(selectedImage));
+      setFakeImageUrl(URL.createObjectURL(selectedImage));
+      e.preventDefault();
+
+      const storageRef = ref(storage, `/images/${selectedImage.name}`);
+      const uploadTask = uploadBytesResumable(storageRef, selectedImage);
+
+      uploadTask.on(
+        'state_changed',
+        (snapshot) => {
+          const prog = Math.round(
+            (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+          );
+          console.log(prog);
+        },
+        (error) => console.log(error),
+        () => {
+          getDownloadURL(uploadTask.snapshot.ref).then((url) => {
+            setImageUrl(url);
+          });
+        }
+      );
     }
   };
 
@@ -51,6 +73,7 @@ const MediaUpload = ({ setImageUrl }) => {
                 <img
                   className='upload-preview-photo'
                   src={URL.createObjectURL(selectedImage)}
+                  alt='uploaded'
                 />
               )}
             </Tab>

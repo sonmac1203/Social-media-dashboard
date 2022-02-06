@@ -37,13 +37,18 @@ i {
   padding-bottom: 10px;
 }
 
-.compose-input-photo {
+.compose-input-photo,
+.compose-input-fake-photo {
   position: absolute;
   bottom: 0;
   margin-left: 12px;
   margin-bottom: 50px;
   height: 85px;
   border-radius: 8px;
+}
+
+.compose-input-fake-photo {
+  opacity: 50%;
 }
 
 .upload-preview-photo {

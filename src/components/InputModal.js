@@ -9,18 +9,24 @@ const InputModal = ({ fb, insta, content, setContent }) => {
 
   const [show, setShow] = useState(false);
 
+  const [fbChosen, setFbChosen] = useState(false);
+
+  const [instaChosen, setInstaChosen] = useState(false);
+
+  const [imageUrl, setImageUrl] = useState(null);
+
+  const [fakeImageUrl, setFakeImageUrl] = useState('');
+
+  const [rows, setRows] = useState(5);
+
   const handleClose = () => {
     setShow(false);
     setImageUrl('');
+    setFakeImageUrl('');
+    setFbChosen(false);
+    setInstaChosen(false);
   };
   const handleShow = () => setShow(true);
-
-  const [instaChosen, setInstaChosen] = useState(false);
-  const [fbChosen, setFbChosen] = useState(false);
-
-  const [imageUrl, setImageUrl] = useState('');
-
-  const [rows, setRows] = useState(5);
 
   const toggleInsta = () => {
     setInstaChosen(!instaChosen);
@@ -31,13 +37,12 @@ const InputModal = ({ fb, insta, content, setContent }) => {
   };
 
   useEffect(() => {
-    if (imageUrl) {
-      setRows(9);
-      console.log(imageUrl);
+    if (imageUrl || fakeImageUrl) {
+      setRows(8);
     } else {
       setRows(5);
     }
-  }, [imageUrl]);
+  }, [imageUrl, fakeImageUrl]);
 
   const postContent = async () => {
     if (fbLogin && fbChosen) {
@@ -65,8 +70,7 @@ const InputModal = ({ fb, insta, content, setContent }) => {
         null,
         {
           params: {
-            image_url:
-              'https://www.sonmac.me/static/media/zendesk.05cc2e8250df4a92ea6c.jpg',
+            image_url: imageUrl,
             caption: content,
             access_token: userToken,
           },
@@ -117,8 +121,24 @@ const InputModal = ({ fb, insta, content, setContent }) => {
                 />
               </Form.Group>
             </Form>
-            {imageUrl && <img className='compose-input-photo' src={imageUrl} />}
-            <MediaUpload setImageUrl={setImageUrl} />
+            {fakeImageUrl && !imageUrl && (
+              <img
+                className='compose-input-fake-photo'
+                src={fakeImageUrl}
+                alt='uploaded'
+              />
+            )}
+            {imageUrl && (
+              <img
+                className='compose-input-photo'
+                src={imageUrl}
+                alt='uploaded'
+              />
+            )}
+            <MediaUpload
+              setImageUrl={setImageUrl}
+              setFakeImageUrl={setFakeImageUrl}
+            />
           </div>
         </Modal.Body>
         <Modal.Footer className='d-flex justify-content-between'>
@@ -133,7 +153,11 @@ const InputModal = ({ fb, insta, content, setContent }) => {
               <Dropdown.Item onClick={toggleInsta}>Instagram</Dropdown.Item>
             )}
           </DropdownButton>
-          <Button variant='primary' onClick={() => postContent()}>
+          <Button
+            variant='primary'
+            onClick={() => postContent()}
+            disabled={(instaChosen && !imageUrl) || (!fbChosen && !instaChosen)}
+          >
             Post
           </Button>
         </Modal.Footer>
