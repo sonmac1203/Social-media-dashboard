@@ -26,7 +26,6 @@ i {
 
 .compose-input {
   position: relative;
-  height: fit-content;
 }
 
 .compose-input-button {
@@ -43,7 +42,6 @@ i {
   bottom: 0;
   margin-left: 12px;
   margin-bottom: 50px;
-  height: 85px;
   border-radius: 8px;
 }
 
@@ -53,4 +51,16 @@ i {
 
 .upload-preview-photo {
   height: 100px;
+}
+
+.compose-input-fake-photo img {
+  border-radius: 8px;
+}
+
+.compose-input-fake-photo p {
+  margin-bottom: 5px;
+}
+
+.fa-check {
+  font-size: 15px;
 }

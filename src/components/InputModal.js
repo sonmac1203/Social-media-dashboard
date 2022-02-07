@@ -19,6 +19,8 @@ const InputModal = ({ fb, insta, content, setContent }) => {
 
   const [rows, setRows] = useState(5);
 
+  const [progress, setProgress] = useState(0);
+
   const handleClose = () => {
     setShow(false);
     setImageUrl('');
@@ -122,22 +124,24 @@ const InputModal = ({ fb, insta, content, setContent }) => {
               </Form.Group>
             </Form>
             {fakeImageUrl && !imageUrl && (
-              <img
-                className='compose-input-fake-photo'
-                src={fakeImageUrl}
-                alt='uploaded'
-              />
+              <div className='compose-input-fake-photo'>
+                <p>{progress} %</p>
+                <img src={fakeImageUrl} alt='uploaded' height='85px' />
+              </div>
             )}
             {imageUrl && (
               <img
                 className='compose-input-photo'
                 src={imageUrl}
                 alt='uploaded'
+                height='85px'
               />
             )}
             <MediaUpload
               setImageUrl={setImageUrl}
               setFakeImageUrl={setFakeImageUrl}
+              fakeImageUrl={fakeImageUrl}
+              setProgress={setProgress}
             />
           </div>
         </Modal.Body>
@@ -147,10 +151,22 @@ const InputModal = ({ fb, insta, content, setContent }) => {
               <Dropdown.Item disabled>Not found</Dropdown.Item>
             )}
             {fbLogin && (
-              <Dropdown.Item onClick={toggleFb}>Facebook</Dropdown.Item>
+              <Dropdown.Item
+                onClick={toggleFb}
+                className='d-flex justify-content-between align-items-center'
+              >
+                Facebook
+                {fbChosen && <i className='fas fa-check'></i>}
+              </Dropdown.Item>
             )}
             {instaLogin && (
-              <Dropdown.Item onClick={toggleInsta}>Instagram</Dropdown.Item>
+              <Dropdown.Item
+                onClick={toggleInsta}
+                className='d-flex justify-content-between align-items-center'
+              >
+                Instagram
+                {instaChosen && <i className='fas fa-check'></i>}
+              </Dropdown.Item>
             )}
           </DropdownButton>
           <Button

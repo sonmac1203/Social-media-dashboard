@@ -1,41 +1,58 @@
 import React, { useState } from 'react';
-import { Modal, Button, Tabs, Tab } from 'react-bootstrap';
+import { Modal, Button, Tabs, Tab, Form } from 'react-bootstrap';
 import { storage } from '../firebase/firebase';
 import { ref, uploadBytesResumable, getDownloadURL } from '@firebase/storage';
 
-const MediaUpload = ({ setImageUrl, setFakeImageUrl, setProgress }) => {
+const MediaUpload = ({
+  setImageUrl,
+  setFakeImageUrl,
+  fakeImageUrl,
+  setProgress,
+}) => {
   const [show, setShow] = useState(false);
   const handleShow = () => setShow(true);
   const [selectedImage, setSelectedImage] = useState(null);
 
+  const [key, setKey] = useState('upload');
+
   const handleClose = () => {
     setShow(false);
-    setSelectedImage(null);
+    if (key === 'upload') {
+      setSelectedImage(null);
+    } else if (key === 'link') {
+      setImageUrl('');
+    }
   };
+
   const handleSave = async (e) => {
     setShow(false);
-    if (selectedImage) {
-      setFakeImageUrl(URL.createObjectURL(selectedImage));
-      e.preventDefault();
+    e.preventDefault();
+    if (key === 'upload') {
+      if (selectedImage) {
+        setFakeImageUrl(URL.createObjectURL(selectedImage));
 
-      const storageRef = ref(storage, `/images/${selectedImage.name}`);
-      const uploadTask = uploadBytesResumable(storageRef, selectedImage);
+        const storageRef = ref(storage, `/images/${selectedImage.name}`);
+        const uploadTask = uploadBytesResumable(storageRef, selectedImage);
 
-      uploadTask.on(
-        'state_changed',
-        (snapshot) => {
-          const prog = Math.round(
-            (snapshot.bytesTransferred / snapshot.totalBytes) * 100
-          );
-          console.log(prog);
-        },
-        (error) => console.log(error),
-        () => {
-          getDownloadURL(uploadTask.snapshot.ref).then((url) => {
-            setImageUrl(url);
-          });
-        }
-      );
+        uploadTask.on(
+          'state_changed',
+          (snapshot) => {
+            const prog = Math.round(
+              (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+            );
+            console.log(prog);
+            setProgress(prog);
+          },
+          (error) => console.log(error),
+          () => {
+            getDownloadURL(uploadTask.snapshot.ref).then((url) => {
+              setImageUrl(url);
+            });
+          }
+        );
+      }
+    } else if (key === 'link') {
+      setImageUrl(fakeImageUrl);
     }
   };
 
@@ -54,32 +71,37 @@ const MediaUpload = ({ setImageUrl, setFakeImageUrl, setProgress }) => {
       >
         <Modal.Body>
           <Tabs
-            defaultActiveKey='upload'
-            id='uncontrolled-tab-example'
+            activeKey={key}
+            id='media-tabs'
             className='mb-3'
+            onSelect={(k) => setKey(k)}
           >
-            <Tab
-              eventKey='upload'
-              title='Upload file'
-              className='d-flex justify-content-between'
-            >
-              <input
-                type='file'
-                accept='image/png, image/jpeg'
-                id='input-photo'
-                onChange={(e) => setSelectedImage(e.target.files[0])}
-              />
-              {selectedImage && (
-                <img
-                  className='upload-preview-photo'
-                  src={URL.createObjectURL(selectedImage)}
-                  alt='uploaded'
+            <Tab eventKey='upload' title='Upload file'>
+              <div className='d-flex justify-content-between'>
+                <input
+                  type='file'
+                  accept='image/png, image/jpeg'
+                  id='input-photo'
+                  onChange={(e) => setSelectedImage(e.target.files[0])}
                 />
-              )}
+                {selectedImage && (
+                  <img
+                    className='upload-preview-photo'
+                    src={URL.createObjectURL(selectedImage)}
+                    alt='uploaded'
+                  />
+                )}
+              </div>
             </Tab>
             <Tab eventKey='link' title='Import URL'>
-              Please provide the URL of the photo below
-              <input type='text' />
+              <Form>
+                <Form.Label>Provide the URL of the photo below</Form.Label>
+                <Form.Control
+                  as='textarea'
+                  placeholder='Enter the URL'
+                  onChange={(e) => setFakeImageUrl(e.target.value)}
+                />
+              </Form>
             </Tab>
           </Tabs>
         </Modal.Body>
