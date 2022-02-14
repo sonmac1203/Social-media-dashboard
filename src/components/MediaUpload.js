@@ -40,7 +40,6 @@ const MediaUpload = ({
             const prog = Math.round(
               (snapshot.bytesTransferred / snapshot.totalBytes) * 100
             );
-            console.log(prog);
             setProgress(prog);
           },
           (error) => console.log(error),

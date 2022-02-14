@@ -21,7 +21,6 @@ const Facebook = ({ login, setLogin }) => {
 
   useEffect(() => {
     if (login && shortToken && userId) {
-      console.log('hihi');
       (async () => {
         const firstResponse = await axios.get(
           'https://graph.facebook.com/v12.0/oauth/access_token',

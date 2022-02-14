@@ -1,23 +1,8 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Tab, Row, Col, Nav } from 'react-bootstrap';
 import Connect from './Connect';
 
 const Sidebar = () => {
-  const [fbLogin, setFbLogin] = useState(false);
-
-  const [instaLogin, setInstaLogin] = useState(false);
-
-  const [content, setContent] = useState('');
-
-  const props = {
-    fbLogin: fbLogin,
-    setFbLogin: setFbLogin,
-    instaLogin: instaLogin,
-    setInstaLogin: setInstaLogin,
-    content: content,
-    setContent: setContent,
-  };
-
   return (
     <div>
       <Tab.Container id='left-tabs-example' defaultActiveKey='first'>
@@ -35,7 +20,7 @@ const Sidebar = () => {
           <Col sm='10'>
             <Tab.Content>
               <Tab.Pane eventKey='first'>
-                <Connect {...props} />
+                <Connect />
               </Tab.Pane>
               <Tab.Pane eventKey='second'>
                 <h2>HIHIHI</h2>

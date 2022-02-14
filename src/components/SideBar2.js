@@ -1,31 +1,27 @@
 import React from 'react';
 import { Row, Col, Nav, Tab } from 'react-bootstrap';
-import Posts from './Posts';
+import Manage from './Manage';
 
 const SideBar2 = () => {
   return (
     <div>
-      <Tab.Container id='left-tabs-example' defaultActiveKey='first'>
+      <Tab.Container id='left-tabs-example' defaultActiveKey='timeline'>
         <Row>
           <Col sm='2' className='tab-column'>
             <Nav variant='pills' className='flex-column'>
               <Nav.Item>
-                <Nav.Link eventKey='first'>Facebook</Nav.Link>
+                <Nav.Link eventKey='timeline'>Timeline</Nav.Link>
               </Nav.Item>
               <Nav.Item>
-                <Nav.Link eventKey='second'>Instagram</Nav.Link>
+                <Nav.Link eventKey='fb'>Facebook</Nav.Link>
+              </Nav.Item>
+              <Nav.Item>
+                <Nav.Link eventKey='insta'>Instagram</Nav.Link>
               </Nav.Item>
             </Nav>
           </Col>
           <Col sm='10'>
-            <Tab.Content>
-              <Tab.Pane eventKey='first'>
-                <Posts />
-              </Tab.Pane>
-              <Tab.Pane eventKey='second'>
-                <h2>HIHIHI</h2>
-              </Tab.Pane>
-            </Tab.Content>
+            <Manage />
           </Col>
         </Row>
       </Tab.Container>
