@@ -49,6 +49,7 @@ const Facebook = ({ login, setLogin }) => {
             },
           }
         );
+        console.log('hah');
         set(ref(database, 'facebook'), {
           name: secondResponse.data.data[0].name,
           profile_picture_url: thirdResponse.data.data.url,

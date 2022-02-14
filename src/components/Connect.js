@@ -19,37 +19,37 @@ const Connect = () => {
   const [fbLogin, setFbLogin] = useState(false);
   const [instaLogin, setInstaLogin] = useState(false);
   const [content, setContent] = useState('');
-  const dbRef = ref(database);
+  // const dbRef = ref(database);
 
-  const checkLoginState = (media) => {
-    get(child(dbRef, media))
-      .then((snapshot) => {
-        if (snapshot.exists()) {
-          const data = snapshot.val();
-          if (media === 'facebook') {
-            if (data.shortToken) {
-              setFbLogin(true);
-            } else {
-              setFbLogin(false);
-            }
-          } else if (media === 'instagram') {
-            if (data.userToken) {
-              setInstaLogin(true);
-            } else {
-              setInstaLogin(false);
-            }
-          }
-        }
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-  };
+  // const checkLoginState = (media) => {
+  //   get(child(dbRef, media))
+  //     .then((snapshot) => {
+  //       if (snapshot.exists()) {
+  //         const data = snapshot.val();
+  //         if (media === 'facebook') {
+  //           if (data.shortToken) {
+  //             setFbLogin(true);
+  //           } else {
+  //             setFbLogin(false);
+  //           }
+  //         } else if (media === 'instagram') {
+  //           if (data.userToken) {
+  //             setInstaLogin(true);
+  //           } else {
+  //             setInstaLogin(false);
+  //           }
+  //         }
+  //       }
+  //     })
+  //     .catch((error) => {
+  //       console.error(error);
+  //     });
+  // };
 
-  useEffect(() => {
-    checkLoginState('facebook');
-    checkLoginState('instagram');
-  }, []);
+  // useEffect(() => {
+  //   checkLoginState('facebook');
+  //   checkLoginState('instagram');
+  // }, []);
 
   return (
     <Container className='mt-5'>
