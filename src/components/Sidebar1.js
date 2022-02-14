@@ -3,27 +3,17 @@ import { Tab, Row, Col, Nav } from 'react-bootstrap';
 import Connect from './Connect';
 
 const Sidebar = () => {
-  const [fbData, setFbData] = useState({
-    login: false,
-    shortToken: '',
-    userID: '',
-    pageLongToken: '',
-    pageID: '',
-  });
+  const [fbLogin, setFbLogin] = useState(false);
 
-  const [instaData, setInstaData] = useState({
-    login: false,
-    userToken: '',
-    pageID: '',
-  });
+  const [instaLogin, setInstaLogin] = useState(false);
 
   const [content, setContent] = useState('');
 
   const props = {
-    fb: fbData,
-    setFb: setFbData,
-    insta: instaData,
-    setInsta: setInstaData,
+    fbLogin: fbLogin,
+    setFbLogin: setFbLogin,
+    instaLogin: instaLogin,
+    setInstaLogin: setInstaLogin,
     content: content,
     setContent: setContent,
   };

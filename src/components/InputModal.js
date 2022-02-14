@@ -2,11 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { Form, Button, Modal, DropdownButton, Dropdown } from 'react-bootstrap';
 import axios from 'axios';
 import MediaUpload from './MediaUpload';
+import { database } from '../firebase/firebase';
+import { ref, child, get, push } from 'firebase/database';
+import { DateTime } from 'luxon';
 
-const InputModal = ({ fb, insta, content, setContent }) => {
-  const { pageID: fbPageID, pageLongToken, login: fbLogin } = fb;
-  const { pageID: instaPageID, userToken, login: instaLogin } = insta;
-
+const InputModal = ({ fbLogin, instaLogin, content, setContent }) => {
   const [show, setShow] = useState(false);
 
   const [fbChosen, setFbChosen] = useState(false);
@@ -46,48 +46,83 @@ const InputModal = ({ fb, insta, content, setContent }) => {
     }
   }, [imageUrl, fakeImageUrl]);
 
-  const postContent = async () => {
+  const postContent = () => {
     if (fbLogin && fbChosen) {
-      axios
-        .post(
-          `https://graph.facebook.com/${fbPageID}/${
-            imageUrl ? 'photos' : 'feed'
-          }`,
-          null,
-          {
-            params: {
-              url: `${imageUrl ? imageUrl : ''}`,
-              message: content,
-              access_token: pageLongToken,
-            },
+      const dbRef = ref(database);
+      get(child(dbRef, 'facebook'))
+        .then((snapshot) => {
+          if (snapshot.exists()) {
+            const data = snapshot.val();
+            axios
+              .post(
+                `https://graph.facebook.com/${data.pageId}/${
+                  imageUrl ? 'photos' : 'feed'
+                }`,
+                null,
+                {
+                  params: {
+                    url: `${imageUrl ? imageUrl : ''}`,
+                    message: content,
+                    access_token: data.pageLongToken,
+                  },
+                }
+              )
+              .then(() => {
+                const post = {
+                  content: content,
+                  image: `${imageUrl ? imageUrl : ''}`,
+                  time: DateTime.now().toISO(),
+                };
+                push(child(ref(database, 'facebook'), 'posts'), post);
+                alert('FACEBOOK UPLOAD SUCCESS!!!');
+                setShow(false);
+              });
+          } else {
+            console.log('No data available');
           }
-        )
-        .then(() => {
-          alert('FACEBOOK UPLOAD SUCCESS!!!');
+        })
+        .catch((error) => {
+          console.error(error);
         });
     }
     if (instaLogin && instaChosen) {
-      const firstResponse = await axios.post(
-        `https://graph.facebook.com/v12.0/${instaPageID}/media`,
-        null,
-        {
-          params: {
-            image_url: imageUrl,
-            caption: content,
-            access_token: userToken,
-          },
-        }
-      );
+      const dbRef = ref(database);
+      get(child(dbRef, `instagram`))
+        .then(async (snapshot) => {
+          if (snapshot.exists()) {
+            const data = snapshot.val();
+            const firstResponse = await axios.post(
+              `https://graph.facebook.com/v12.0/${data.pageId}/media`,
+              null,
+              {
+                params: {
+                  image_url: imageUrl,
+                  caption: content,
+                  access_token: data.userToken,
+                },
+              }
+            );
 
-      await axios
-        .post(`https://graph.facebook.com/${instaPageID}/media_publish`, null, {
-          params: {
-            creation_id: firstResponse.data.id,
-            access_token: userToken,
-          },
+            await axios
+              .post(
+                `https://graph.facebook.com/${data.pageId}/media_publish`,
+                null,
+                {
+                  params: {
+                    creation_id: firstResponse.data.id,
+                    access_token: data.userToken,
+                  },
+                }
+              )
+              .then(() => {
+                alert('INSTAGRAM UPLOAD SUCCESS!!!');
+              });
+          } else {
+            console.log('No data available');
+          }
         })
-        .then(() => {
-          alert('INSTAGRAM UPLOAD SUCCESS!!!');
+        .catch((error) => {
+          console.error(error);
         });
     }
   };

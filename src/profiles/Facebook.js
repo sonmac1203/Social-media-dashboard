@@ -1,25 +1,27 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import FacebookLogin from 'react-facebook-login/dist/facebook-login-render-props';
 import { Col, Card, Button } from 'react-bootstrap';
 import axios from 'axios';
+import { database } from '../firebase/firebase';
+import { ref, set } from 'firebase/database';
 
-const Facebook = ({ fb, setFb }) => {
+const Facebook = ({ login, setLogin }) => {
+  const [shortToken, setShortToken] = useState(null);
+  const [userId, setUserId] = useState(null);
+
   const responseFacebook = (response) => {
     if (response.accessToken) {
-      setFb({
-        ...fb,
-        login: true,
-        shortToken: response.accessToken,
-        userID: response.userID,
-      });
+      setLogin(true);
+      setShortToken(response.accessToken);
+      setUserId(response.userID);
     } else {
-      setFb({ ...fb, login: false });
+      setLogin(false);
     }
   };
 
-  const { login, shortToken, userID } = fb;
   useEffect(() => {
-    if (login) {
+    if (login && shortToken && userId) {
+      console.log('hihi');
       (async () => {
         const firstResponse = await axios.get(
           'https://graph.facebook.com/v12.0/oauth/access_token',
@@ -34,14 +36,27 @@ const Facebook = ({ fb, setFb }) => {
         );
 
         const secondResponse = await axios.get(
-          `https://graph.facebook.com/${userID}/accounts`,
+          `https://graph.facebook.com/${userId}/accounts`,
           { params: { access_token: firstResponse.data.access_token } }
         );
 
-        setFb({
-          ...fb,
-          pageID: secondResponse.data.data[0].id,
+        const thirdResponse = await axios.get(
+          `https://graph.facebook.com/v13.0/${secondResponse.data.data[0].id}/picture`,
+          {
+            params: {
+              type: 'large',
+              redirect: 'false',
+              access_token: shortToken,
+            },
+          }
+        );
+        set(ref(database, 'facebook'), {
+          name: secondResponse.data.data[0].name,
+          profile_picture_url: thirdResponse.data.data.url,
+          shortToken: shortToken,
+          userId: userId,
           pageLongToken: secondResponse.data.data[0].access_token,
+          pageId: secondResponse.data.data[0].id,
         });
       })();
     }

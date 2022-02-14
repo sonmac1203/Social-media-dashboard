@@ -6,18 +6,25 @@ import Instagram from '../profiles/Instagram';
 import Yelp from '../profiles/Yelp';
 import InputModal from './InputModal';
 
-const Connect = ({ fb, setFb, insta, setInsta, content, setContent }) => {
+const Connect = ({
+  fbLogin,
+  setFbLogin,
+  instaLogin,
+  setInstaLogin,
+  content,
+  setContent,
+}) => {
   return (
     <Container className='mt-5'>
       <InputModal
-        fb={fb}
-        insta={insta}
+        fbLogin={fbLogin}
+        instaLogin={instaLogin}
         content={content}
         setContent={setContent}
       />
       <Row>
-        <Facebook fb={fb} setFb={setFb} />
-        <Instagram insta={insta} setInsta={setInsta} />
+        <Facebook login={fbLogin} setLogin={setFbLogin} />
+        <Instagram login={instaLogin} setLogin={setInstaLogin} />
         <Google />
         <Yelp />
       </Row>

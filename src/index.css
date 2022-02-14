@@ -64,3 +64,22 @@ i {
 .fa-check {
   font-size: 15px;
 }
+
+img.facebook-post-avatar {
+  height: 60px;
+  border-radius: 50%;
+}
+
+img.facebook-post-image {
+  width: 600px;
+  border-radius: 5%;
+}
+
+p.post-content {
+  font-size: 30px;
+}
+
+h6.facebook-post-time-stamp {
+  font-size: 12px;
+  color: gray;
+}

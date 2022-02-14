@@ -1,27 +1,29 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Col, Card, Button } from 'react-bootstrap';
 import FacebookLogin from 'react-facebook-login/dist/facebook-login-render-props';
 import axios from 'axios';
+import { database } from '../firebase/firebase';
+import { ref, set } from 'firebase/database';
 
-const Instagram = ({ insta, setInsta }) => {
+const Instagram = ({ login, setLogin }) => {
+  const [userToken, setUserToken] = useState(null);
+
   const responseFacebook = (response) => {
-    console.log(response);
     if (response.accessToken) {
-      setInsta({ ...insta, login: true, userToken: response.accessToken });
+      setLogin(true);
+      setUserToken(response.accessToken);
     } else {
-      setInsta({ ...insta, login: false });
+      setLogin(false);
     }
   };
 
-  const { login, userToken } = insta;
   useEffect(() => {
-    if (login) {
+    if (login && userToken) {
       (async () => {
         const firstResponse = await axios.get(
           'https://graph.facebook.com/v12.0/me/accounts',
           { params: { access_token: userToken } }
         );
-        console.log(firstResponse.data.data);
         const secondResponse = await axios.get(
           `https://graph.facebook.com/v12.0/${firstResponse.data.data[0].id}`,
           {
@@ -31,11 +33,20 @@ const Instagram = ({ insta, setInsta }) => {
             },
           }
         );
-        console.log(secondResponse.data.id);
-        setInsta({
-          ...insta,
-          pageID: secondResponse.data.instagram_business_account.id,
-          // pageID: secondResponse.data.id,
+        const thirdResponse = await axios.get(
+          `https://graph.facebook.com/v13.0/${secondResponse.data.instagram_business_account.id}`,
+          {
+            params: {
+              fields: 'name,profile_picture_url',
+              access_token: userToken,
+            },
+          }
+        );
+        set(ref(database, 'instagram'), {
+          name: thirdResponse.data.name,
+          profile_picture_url: thirdResponse.data.profile_picture_url,
+          userToken: userToken,
+          pageId: secondResponse.data.instagram_business_account.id,
         });
       })();
     }
