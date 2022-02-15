@@ -13,12 +13,13 @@ const Instagram = ({ login, setLogin }) => {
       setLogin(true);
       setUserToken(response.accessToken);
     } else {
-      setLogin(false);
+      // setLogin(false);
     }
   };
 
   useEffect(() => {
-    if (login && userToken) {
+    // if (login && userToken) {
+    if (userToken) {
       (async () => {
         const firstResponse = await axios.get(
           'https://graph.facebook.com/v12.0/me/accounts',

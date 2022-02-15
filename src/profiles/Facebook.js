@@ -11,16 +11,18 @@ const Facebook = ({ login, setLogin }) => {
 
   const responseFacebook = (response) => {
     if (response.accessToken) {
-      setLogin(true);
+      // console.log('setting login to true');
+      // setLogin(true);
       setShortToken(response.accessToken);
       setUserId(response.userID);
     } else {
-      setLogin(false);
+      // setLogin(false);
     }
   };
 
   useEffect(() => {
-    if (login && shortToken && userId) {
+    // if (login && shortToken && userId) {
+    if (shortToken && userId) {
       (async () => {
         const firstResponse = await axios.get(
           'https://graph.facebook.com/v12.0/oauth/access_token',
@@ -49,7 +51,6 @@ const Facebook = ({ login, setLogin }) => {
             },
           }
         );
-        console.log('hah');
         set(ref(database, 'facebook'), {
           name: secondResponse.data.data[0].name,
           profile_picture_url: thirdResponse.data.data.url,
@@ -60,7 +61,7 @@ const Facebook = ({ login, setLogin }) => {
         });
       })();
     }
-  }, [login, shortToken]);
+  }, [shortToken, userId]);
 
   return (
     <Col xl='3'>

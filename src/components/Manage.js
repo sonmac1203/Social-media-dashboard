@@ -85,26 +85,6 @@ const Manage = () => {
     setAllPosts(allArray);
   }, [list]);
 
-  // useEffect(() => {
-  //   const fbArray = [];
-  //   const instaArray = [];
-  //   const allArray = [];
-  //   if (list !== null) {
-  //     for (const key in list) {
-  //       if (list[key].facebook_posted) {
-  //         fbArray.push(list[key]);
-  //       }
-  //       if (list[key].insta_posted) {
-  //         instaArray.push(list[key]);
-  //       }
-  //       allArray.push(list[key]);
-  //     }
-  //   }
-  //   setFbPosts(fbArray);
-  //   setInstaPosts(instaArray);
-  //   setAllPosts(allArray);
-  // }, [list]);
-
   return (
     <Tab.Content>
       <Tab.Pane eventKey='timeline'>

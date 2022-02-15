@@ -24,6 +24,14 @@ i {
   font-size: 30px;
 }
 
+i.drop-down-icon {
+  font-size: 22px;
+}
+
+.facebook-post-functions i {
+  font-size: 20px;
+}
+
 .compose-input {
   position: relative;
 }

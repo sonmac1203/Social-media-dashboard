@@ -3,7 +3,14 @@ import { Form, Button, Modal, DropdownButton, Dropdown } from 'react-bootstrap';
 import axios from 'axios';
 import MediaUpload from './MediaUpload';
 import { database } from '../firebase/firebase';
-import { ref, child, get, push } from 'firebase/database';
+import {
+  ref,
+  child,
+  get,
+  push,
+  onValue,
+  onChildAdded,
+} from 'firebase/database';
 import { DateTime } from 'luxon';
 
 const InputModal = ({ fbLogin, instaLogin, content, setContent }) => {
@@ -22,6 +29,10 @@ const InputModal = ({ fbLogin, instaLogin, content, setContent }) => {
   const [progress, setProgress] = useState(0);
 
   const [posted, setPosted] = useState(false);
+
+  const [fbName, setFbName] = useState(null);
+  const [instaName, setInstaName] = useState(null);
+  const [pagePostId, setPagePostId] = useState(null);
 
   const handleClose = () => {
     setShow(false);
@@ -68,7 +79,9 @@ const InputModal = ({ fbLogin, instaLogin, content, setContent }) => {
                 access_token: data.pageLongToken,
               },
             };
-            await axios.post(url, null, params);
+            const postResponse = await axios.post(url, null, params);
+            // console.log(postResponse.data);
+            setPagePostId(postResponse.data.id);
             alert('FACEBOOK UPLOAD SUCCESS!!!');
             setPosted(true);
             setShow(false);
@@ -114,6 +127,17 @@ const InputModal = ({ fbLogin, instaLogin, content, setContent }) => {
   };
 
   useEffect(() => {
+    onChildAdded(ref(database), (data) => {
+      if (data.key === 'facebook') {
+        setFbName(data.val().name);
+      }
+      if (data.key === 'instagram') {
+        setInstaName(data.val().name);
+      }
+    });
+  }, []);
+
+  useEffect(() => {
     if (posted) {
       const post = {
         facebook_posted: fbChosen,
@@ -121,6 +145,7 @@ const InputModal = ({ fbLogin, instaLogin, content, setContent }) => {
         content: content,
         image: imageUrl,
         time: DateTime.now().toMillis() * -1,
+        id: pagePostId,
       };
       push(child(ref(database), 'posts'), post);
     }
@@ -189,8 +214,11 @@ const InputModal = ({ fbLogin, instaLogin, content, setContent }) => {
                 onClick={toggleFb}
                 className='d-flex justify-content-between align-items-center'
               >
-                Facebook
-                {fbChosen && <i className='fas fa-check'></i>}
+                <div className='d-flex align-items-center'>
+                  <i className='fab fa-facebook-square me-2 drop-down-icon'></i>
+                  <strong>{fbName}</strong>
+                </div>
+                {fbChosen && <i className='fas fa-check ms-2'></i>}
               </Dropdown.Item>
             )}
             {instaLogin && (
@@ -198,7 +226,10 @@ const InputModal = ({ fbLogin, instaLogin, content, setContent }) => {
                 onClick={toggleInsta}
                 className='d-flex justify-content-between align-items-center'
               >
-                Instagram
+                <div className='d-flex align-items-center'>
+                  <i className='fab fa-instagram me-2 drop-down-icon'></i>
+                  <strong>{instaName}</strong>
+                </div>
                 {instaChosen && <i className='fas fa-check'></i>}
               </Dropdown.Item>
             )}
