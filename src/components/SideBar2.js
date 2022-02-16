@@ -1,6 +1,6 @@
 import React from 'react';
 import { Row, Col, Nav, Tab } from 'react-bootstrap';
-import Manage from './Manage';
+import Manage from './management/Manage';
 
 const SideBar2 = () => {
   return (

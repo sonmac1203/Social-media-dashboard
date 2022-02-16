@@ -1,14 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { database } from '../firebase/firebase';
-import {
-  ref,
-  child,
-  get,
-  onChildAdded,
-  query,
-  orderByChild,
-  onValue,
-} from 'firebase/database';
+import { database } from '../../firebase/firebase';
+import { ref, child, query, orderByChild, onValue } from 'firebase/database';
 import { Tab } from 'react-bootstrap';
 import Posts from './Posts';
 

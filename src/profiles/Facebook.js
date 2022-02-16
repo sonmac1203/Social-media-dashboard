@@ -11,7 +11,6 @@ const Facebook = ({ login, setLogin }) => {
 
   const responseFacebook = (response) => {
     if (response.accessToken) {
-      // console.log('setting login to true');
       // setLogin(true);
       setShortToken(response.accessToken);
       setUserId(response.userID);
@@ -21,7 +20,6 @@ const Facebook = ({ login, setLogin }) => {
   };
 
   useEffect(() => {
-    // if (login && shortToken && userId) {
     if (shortToken && userId) {
       (async () => {
         const firstResponse = await axios.get(
@@ -54,9 +52,7 @@ const Facebook = ({ login, setLogin }) => {
         set(ref(database, 'facebook'), {
           name: secondResponse.data.data[0].name,
           profile_picture_url: thirdResponse.data.data.url,
-          // shortToken: shortToken,
           access_token: firstResponse.data.access_token,
-          // userId: userId,
           page_token: secondResponse.data.data[0].access_token,
           page_id: secondResponse.data.data[0].id,
         });
@@ -78,8 +74,6 @@ const Facebook = ({ login, setLogin }) => {
           {!login && (
             <FacebookLogin
               appId='959795267956866'
-              autoLoad={true}
-              fields='name'
               scope='public_profile,pages_manage_posts,pages_read_engagement,pages_show_list'
               callback={responseFacebook}
               render={(renderProps) => (

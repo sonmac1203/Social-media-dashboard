@@ -32,7 +32,8 @@ const InputModal = ({ fbLogin, instaLogin, content, setContent }) => {
 
   const [fbName, setFbName] = useState(null);
   const [instaName, setInstaName] = useState(null);
-  const [pagePostId, setPagePostId] = useState(null);
+  const [pageFbPostId, setPageFbPostId] = useState('');
+  const [pageInstaPostId, setPageInstaPostId] = useState('');
 
   const handleClose = () => {
     setShow(false);
@@ -81,7 +82,7 @@ const InputModal = ({ fbLogin, instaLogin, content, setContent }) => {
             };
             const postResponse = await axios.post(url, null, params);
             console.log(postResponse.data);
-            setPagePostId(
+            setPageFbPostId(
               imageUrl.length > 0
                 ? postResponse.data.post_id
                 : postResponse.data.id
@@ -123,6 +124,7 @@ const InputModal = ({ fbLogin, instaLogin, content, setContent }) => {
             const postResponse = await axios.post(url, null, params);
             console.log('insta branch');
             console.log(postResponse.data);
+            setPageInstaPostId(postResponse.data.id);
             alert('INSTAGRAM UPLOAD SUCCESS!!!');
             setPosted(true);
             setShow(false);
@@ -153,9 +155,12 @@ const InputModal = ({ fbLogin, instaLogin, content, setContent }) => {
         content: content,
         image: imageUrl,
         time: DateTime.now().toMillis() * -1,
-        id: pagePostId,
+        facebook_post_id: pageFbPostId,
+        instagram_post_id: pageInstaPostId,
       };
       push(child(ref(database), 'posts'), post);
+      setPageFbPostId('');
+      setPageInstaPostId('');
     }
   }, [posted]);
 
