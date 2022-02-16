@@ -1,22 +1,62 @@
 import React, { useState } from 'react';
-import { Row, Container, Badge, Form, Button } from 'react-bootstrap';
-// import { database } from '../firebase/firebase';
-// import { ref } from 'firebase/database';
+import { Row, Container, Badge, Form, Button, Modal } from 'react-bootstrap';
 import { DateTime } from 'luxon';
+import axios from 'axios';
+import { database } from '../firebase/firebase';
+import {
+  equalTo,
+  orderByChild,
+  child,
+  ref,
+  query,
+  onValue,
+  set,
+  update,
+} from 'firebase/database';
 
 const Post = ({
-  post: { content, image, time, facebook_posted, insta_posted },
+  post: { content, image, time, facebook_posted, instagram_posted, id },
   imageUrl,
   name,
+  pageToken,
 }) => {
-  const [editChosen, setEditChosen] = useState(false);
-
   const [newContent, setNewContent] = useState('');
+
+  const [show, setShow] = useState(false);
+
+  const handleClose = () => {
+    setShow(false);
+    setNewContent('');
+  };
+  const handleShow = () => setShow(true);
+
+  const handleUpdate = async () => {
+    const postRef = ref(database, 'posts');
+    console.log(newContent);
+    const url = `https://graph.facebook.com/${id}`;
+    const params = {
+      params: {
+        message: newContent,
+        access_token: pageToken,
+      },
+    };
+    console.log(id);
+    console.log(pageToken);
+    await axios.post(url, null, params);
+    onValue(query(postRef, orderByChild('id'), equalTo(id)), (snapshot) => {
+      snapshot.forEach((post) => {
+        console.log(post.val());
+        set(child(post.ref, 'content'), newContent);
+      });
+    });
+    alert('FACEBOOK UPDATE SUCCESS!!!');
+    setShow(false);
+  };
 
   return (
     <Container className='mt-4'>
       <Row className='mb-5 border ps-2 pt-2'>
-        {imageUrl && name && (
+        {imageUrl && name ? (
           <div className='d-flex justify-content-between'>
             <div className='d-flex justify-content-start mt-3 mb-2'>
               <img
@@ -32,39 +72,67 @@ const Post = ({
               </div>
             </div>
             <div className='me-3 mt-3 facebook-post-functions'>
-              <i
-                className='fas fa-edit'
-                onClick={() => setEditChosen(true)}
-              ></i>
+              {pageToken && (
+                <i className='fas fa-edit' onClick={handleShow}></i>
+              )}
               <i className='fas fa-trash ms-3'></i>
             </div>
           </div>
-        )}
-        {!imageUrl && !name && (
+        ) : (
           <h6 className='facebook-post-time-stamp mt-2'>{`Posted at ${DateTime.fromMillis(
             time * -1
           ).toFormat('ff')}`}</h6>
         )}
         <div>
-          {!editChosen ? (
-            <p className='post-content'>{content}</p>
-          ) : (
-            <div>
-              <Form className='mb-4 mt-2'>
+          <p className='post-content'>{content}</p>
+          <Modal
+            show={show}
+            onHide={handleClose}
+            backdrop='static'
+            keyboard={false}
+            animation={false}
+          >
+            <Modal.Header>
+              <Modal.Title className='d-flex justify-content-start'>
+                <img
+                  src={imageUrl}
+                  alt='page-avatar'
+                  className='facebook-post-avatar'
+                />
+                <div className='ms-3'>
+                  <strong>{name}</strong>
+                  <h6 className='facebook-post-time-stamp'>{`Posted at ${DateTime.fromMillis(
+                    time * -1
+                  ).toFormat('ff')}`}</h6>
+                </div>
+              </Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              <Form className='update-form'>
                 <Form.Group>
                   <Form.Control
                     as='textarea'
-                    value={content}
-                    rows='3'
+                    rows='4'
+                    autoFocus
+                    defaultValue={content}
                     onChange={(e) => setNewContent(e.target.value)}
                   />
                 </Form.Group>
               </Form>
-              <div className='d-flex justify-content-end mb-4'>
-                <Button>Update</Button>
-              </div>
-            </div>
-          )}
+            </Modal.Body>
+            <Modal.Footer>
+              <Button variant='secondary' onClick={handleClose}>
+                Close
+              </Button>
+              <Button
+                variant='primary'
+                disabled={newContent === ''}
+                onClick={handleUpdate}
+              >
+                Update
+              </Button>
+            </Modal.Footer>
+          </Modal>
         </div>
         {image && (
           <img
@@ -76,7 +144,7 @@ const Post = ({
         {!imageUrl && !name && (
           <div className='d-flex justify-content-start mb-3'>
             {facebook_posted && <Badge className='me-3'>Facebook</Badge>}
-            {insta_posted && <Badge className='me-3'>Instagram</Badge>}
+            {instagram_posted && <Badge className='me-3'>Instagram</Badge>}
           </div>
         )}
       </Row>

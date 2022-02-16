@@ -69,19 +69,23 @@ const InputModal = ({ fbLogin, instaLogin, content, setContent }) => {
         .then(async (snapshot) => {
           if (snapshot.exists()) {
             const data = snapshot.val();
-            const url = `https://graph.facebook.com/${data.pageId}/${
+            const url = `https://graph.facebook.com/${data.page_id}/${
               imageUrl ? 'photos' : 'feed'
             }`;
             const params = {
               params: {
-                url: `${imageUrl ? imageUrl : ''}`,
+                url: imageUrl,
                 message: content,
-                access_token: data.pageLongToken,
+                access_token: data.page_token,
               },
             };
             const postResponse = await axios.post(url, null, params);
-            // console.log(postResponse.data);
-            setPagePostId(postResponse.data.id);
+            console.log(postResponse.data);
+            setPagePostId(
+              imageUrl.length > 0
+                ? postResponse.data.post_id
+                : postResponse.data.id
+            );
             alert('FACEBOOK UPLOAD SUCCESS!!!');
             setPosted(true);
             setShow(false);
@@ -96,25 +100,29 @@ const InputModal = ({ fbLogin, instaLogin, content, setContent }) => {
       get(child(dbRef, `instagram`))
         .then(async (snapshot) => {
           if (snapshot.exists()) {
+            console.log('im making a post to instagram');
             const data = snapshot.val();
-            let url = `https://graph.facebook.com/v12.0/${data.pageId}/media`;
+            let url = `https://graph.facebook.com/v12.0/${data.page_id}/media`;
             let params = {
               params: {
                 image_url: imageUrl,
                 caption: content,
-                access_token: data.userToken,
+                access_token: data.access_token,
               },
             };
             const firstResponse = await axios.post(url, null, params);
+            console.log(firstResponse);
 
-            url = `https://graph.facebook.com/${data.pageId}/media_publish`;
+            url = `https://graph.facebook.com/${data.page_id}/media_publish`;
             params = {
               params: {
                 creation_id: firstResponse.data.id,
-                access_token: data.userToken,
+                access_token: data.access_token,
               },
             };
-            await axios.post(url, null, params);
+            const postResponse = await axios.post(url, null, params);
+            console.log('insta branch');
+            console.log(postResponse.data);
             alert('INSTAGRAM UPLOAD SUCCESS!!!');
             setPosted(true);
             setShow(false);
@@ -141,7 +149,7 @@ const InputModal = ({ fbLogin, instaLogin, content, setContent }) => {
     if (posted) {
       const post = {
         facebook_posted: fbChosen,
-        insta_posted: instaChosen,
+        instagram_posted: instaChosen,
         content: content,
         image: imageUrl,
         time: DateTime.now().toMillis() * -1,
@@ -173,7 +181,7 @@ const InputModal = ({ fbLogin, instaLogin, content, setContent }) => {
           </div>
           <div className='compose-input'>
             <Form>
-              <Form.Group className='mb-3' controlId='testform'>
+              <Form.Group controlId='update-form'>
                 <Form.Control
                   as='textarea'
                   placeholder='Enter your content'

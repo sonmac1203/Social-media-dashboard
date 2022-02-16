@@ -54,10 +54,11 @@ const Facebook = ({ login, setLogin }) => {
         set(ref(database, 'facebook'), {
           name: secondResponse.data.data[0].name,
           profile_picture_url: thirdResponse.data.data.url,
-          shortToken: shortToken,
-          userId: userId,
-          pageLongToken: secondResponse.data.data[0].access_token,
-          pageId: secondResponse.data.data[0].id,
+          // shortToken: shortToken,
+          access_token: firstResponse.data.access_token,
+          // userId: userId,
+          page_token: secondResponse.data.data[0].access_token,
+          page_id: secondResponse.data.data[0].id,
         });
       })();
     }
