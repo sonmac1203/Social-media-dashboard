@@ -74,8 +74,8 @@ const Post = ({ post, imageUrl, name, pageToken }) => {
         {image && (
           <img
             src={image}
-            alt='image uploaded with this post'
-            className='facebook-post-image mb-4'
+            alt='uploaded with this post'
+            className='post-image mb-4'
           />
         )}
       </Row>

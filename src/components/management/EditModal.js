@@ -11,12 +11,13 @@ import {
   query,
   onValue,
   set,
+  push,
 } from 'firebase/database';
 
 const EditModal = ({
   show,
   setShow,
-  post: { content, time, facebook_post_id },
+  post: { content, time, facebook_post_id, image },
   name,
   pageToken,
   imageUrl,
@@ -30,7 +31,6 @@ const EditModal = ({
 
   const handleUpdate = async () => {
     const postRef = ref(database, 'posts');
-    console.log(newContent);
     const url = `https://graph.facebook.com/${facebook_post_id}`;
     const params = {
       params: {
@@ -47,11 +47,26 @@ const EditModal = ({
       ),
       (snapshot) => {
         snapshot.forEach((post) => {
-          console.log(post.val());
-          set(child(post.ref, 'content'), newContent);
+          if (!post.val().instagram_posted) {
+            set(child(post.ref, 'content'), newContent);
+          } else {
+            set(child(post.ref, 'facebook_posted'), false);
+            set(child(post.ref, 'facebook_post_id'), '');
+          }
         });
       }
     );
+    console.log('Im pushing the second time guys!!!');
+    const editedPost = {
+      facebook_posted: true,
+      instagram_posted: false,
+      content: newContent,
+      image: image,
+      time: time,
+      facebook_post_id: facebook_post_id,
+      instagram_post_id: '',
+    };
+    push(child(ref(database), 'posts'), editedPost);
     alert('FACEBOOK UPDATE SUCCESS!!!');
     setShow(false);
   };

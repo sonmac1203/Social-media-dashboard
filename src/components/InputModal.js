@@ -28,7 +28,8 @@ const InputModal = ({ fbLogin, instaLogin, content, setContent }) => {
 
   const [progress, setProgress] = useState(0);
 
-  const [posted, setPosted] = useState(false);
+  const [fbPosted, setFbPosted] = useState(false);
+  const [instaPosted, setInstaPosted] = useState(false);
 
   const [fbName, setFbName] = useState(null);
   const [instaName, setInstaName] = useState(null);
@@ -44,7 +45,8 @@ const InputModal = ({ fbLogin, instaLogin, content, setContent }) => {
   };
   const handleShow = () => {
     setShow(true);
-    setPosted(false);
+    setFbPosted(false);
+    setInstaPosted(false);
   };
 
   const toggleInsta = () => {
@@ -81,15 +83,13 @@ const InputModal = ({ fbLogin, instaLogin, content, setContent }) => {
               },
             };
             const postResponse = await axios.post(url, null, params);
-            console.log(postResponse.data);
             setPageFbPostId(
               imageUrl.length > 0
                 ? postResponse.data.post_id
                 : postResponse.data.id
             );
             alert('FACEBOOK UPLOAD SUCCESS!!!');
-            setPosted(true);
-            setShow(false);
+            setFbPosted(true);
           }
         })
         .catch((error) => {
@@ -112,7 +112,6 @@ const InputModal = ({ fbLogin, instaLogin, content, setContent }) => {
               },
             };
             const firstResponse = await axios.post(url, null, params);
-            console.log(firstResponse);
 
             url = `https://graph.facebook.com/${data.page_id}/media_publish`;
             params = {
@@ -126,8 +125,7 @@ const InputModal = ({ fbLogin, instaLogin, content, setContent }) => {
             console.log(postResponse.data);
             setPageInstaPostId(postResponse.data.id);
             alert('INSTAGRAM UPLOAD SUCCESS!!!');
-            setPosted(true);
-            setShow(false);
+            setInstaPosted(true);
           }
         })
         .catch((error) => {
@@ -148,7 +146,12 @@ const InputModal = ({ fbLogin, instaLogin, content, setContent }) => {
   }, []);
 
   useEffect(() => {
-    if (posted) {
+    if (
+      (fbChosen && instaChosen && fbPosted && instaPosted) ||
+      (fbChosen && !instaChosen && fbPosted) ||
+      (!fbChosen && instaChosen && instaPosted)
+    ) {
+      console.log('Im saving the post to db!!!');
       const post = {
         facebook_posted: fbChosen,
         instagram_posted: instaChosen,
@@ -161,8 +164,9 @@ const InputModal = ({ fbLogin, instaLogin, content, setContent }) => {
       push(child(ref(database), 'posts'), post);
       setPageFbPostId('');
       setPageInstaPostId('');
+      handleClose();
     }
-  }, [posted]);
+  }, [fbPosted, instaPosted]);
 
   return (
     <div>
@@ -218,7 +222,11 @@ const InputModal = ({ fbLogin, instaLogin, content, setContent }) => {
           </div>
         </Modal.Body>
         <Modal.Footer className='d-flex justify-content-between'>
-          <DropdownButton id='dropdown-basic-button' title='Choose a profile'>
+          <DropdownButton
+            id='dropdown-basic-button'
+            title='Choose a profile'
+            autoClose={false}
+          >
             {!fbLogin && !instaLogin && (
               <Dropdown.Item disabled>Not found</Dropdown.Item>
             )}
