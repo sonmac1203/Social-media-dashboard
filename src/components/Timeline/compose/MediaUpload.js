@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Modal, Button, Tabs, Tab, Form } from 'react-bootstrap';
-import { storage } from '../firebase/firebase';
+import { storage } from '../../../firebase/firebase';
 import { ref, uploadBytesResumable, getDownloadURL } from '@firebase/storage';
 
 const MediaUpload = ({

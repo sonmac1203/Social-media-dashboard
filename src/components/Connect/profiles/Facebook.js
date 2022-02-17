@@ -2,10 +2,10 @@ import React, { useEffect, useState } from 'react';
 import FacebookLogin from 'react-facebook-login/dist/facebook-login-render-props';
 import { Col, Card, Button } from 'react-bootstrap';
 import axios from 'axios';
-import { database } from '../firebase/firebase';
+import { database } from '../../../firebase/firebase';
 import { ref, set } from 'firebase/database';
 
-const Facebook = ({ login, setLogin }) => {
+const Facebook = ({ login }) => {
   const [shortToken, setShortToken] = useState(null);
   const [userId, setUserId] = useState(null);
 
@@ -61,12 +61,13 @@ const Facebook = ({ login, setLogin }) => {
   }, [shortToken, userId]);
 
   return (
-    <Col xl='3'>
-      <Card style={{ width: '260px' }}>
+    <Col md='6' lg={{ span: 6, offset: 3 }}>
+      <Card>
         <Card.Body>
           <Card.Title>
-            <div>
+            <div className='d-flex justify-content-between'>
               <i className='fab fa-facebook-square mb-2' />
+              <i className='fas fa-check-circle'></i>
             </div>
             <div>Facebook</div>
           </Card.Title>
@@ -77,11 +78,11 @@ const Facebook = ({ login, setLogin }) => {
               scope='public_profile,pages_manage_posts,pages_read_engagement,pages_show_list'
               callback={responseFacebook}
               render={(renderProps) => (
-                <Button onClick={renderProps.onClick}>Add</Button>
+                <Button onClick={renderProps.onClick}>Connect</Button>
               )}
             />
           )}
-          {login && <Button disabled>Added</Button>}
+          {login && <Button disabled>Disconnect</Button>}
         </Card.Body>
       </Card>
     </Col>

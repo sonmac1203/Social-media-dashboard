@@ -1,10 +1,5 @@
 body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  background-color: #e5e4e2;
 }
 
 .tab-column {
@@ -99,4 +94,84 @@ h6.facebook-post-time-stamp {
 
 .update-form .form-control:focus {
   box-shadow: none;
+}
+
+ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background-color: white;
+}
+li a {
+  display: block;
+  color: black;
+  text-align: center;
+  padding-top: 20px;
+  padding-bottom: 20px;
+  padding-left: 8px;
+  text-decoration: none;
+}
+
+/* .container {
+  padding-left: 300px;
+  padding-right: 300px;
+  border: 1px solid red;
+} */
+
+.timeline-col {
+  margin-top: 23px;
+}
+
+.timeline-post-row {
+  background-color: white;
+  border-radius: 10px;
+}
+
+.card {
+  margin-bottom: 20px;
+}
+
+li i {
+  font-size: 19px;
+}
+
+.post-btn {
+  margin-top: 15px;
+  width: 100%;
+  height: 60px;
+  border-radius: 30px;
+  background-color: #f1f0ee;
+  color: grey;
+  text-align: start;
+  border: none;
+}
+
+.post-btn:hover {
+  background-color: #c4c3c1;
+  border: none;
+  color: #36454f;
+}
+
+.input-row {
+  background-color: white;
+  height: 165px;
+  margin-bottom: 20px;
+  padding: 25px 20px;
+  border-radius: 10px;
+}
+
+.fb-badge {
+  background-color: #1778f2 !important;
+}
+
+.insta-badge {
+  background: radial-gradient(
+    circle at 30% 107%,
+    #fdf497 0%,
+    #fdf497 5%,
+    #fd5949 45%,
+    #d6249f 60%,
+    #285aeb 90%
+  ) !important;
 }

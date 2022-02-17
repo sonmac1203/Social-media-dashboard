@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { database } from '../../firebase/firebase';
 import { ref, child, query, orderByChild, onValue } from 'firebase/database';
-import { Tab } from 'react-bootstrap';
-import Posts from './Posts';
+import { Dropdown, DropdownButton, Col } from 'react-bootstrap';
+import Posts from './management/Posts';
+import InputModal from './compose/InputModal';
 
-const Manage = () => {
+const Timeline = ({ fbLogin, instaLogin }) => {
   const [list, setList] = useState({});
   const dbRef = ref(database);
   const postRef = ref(database, 'posts');
@@ -21,6 +22,8 @@ const Manage = () => {
 
   const [fbPageToken, setFbPageToken] = useState(null);
 
+  const [chosenType, setChosenType] = useState('All posts');
+
   const getUserNameAndAvatar = (media) => {
     onValue(child(dbRef, media), (snapshot) => {
       if (snapshot.exists()) {
@@ -36,7 +39,6 @@ const Manage = () => {
       }
     });
   };
-
   useEffect(() => {
     getUserNameAndAvatar('facebook');
     getUserNameAndAvatar('instagram');
@@ -89,25 +91,46 @@ const Manage = () => {
     setInstaPosts(instaArray);
     setAllPosts(allArray);
   }, [list]);
-
   return (
-    <Tab.Content>
-      <Tab.Pane eventKey='timeline'>
-        <Posts posts={allPosts} />
-      </Tab.Pane>
-      <Tab.Pane eventKey='fb'>
-        <Posts
-          posts={fbPosts}
-          name={fbName}
-          imageUrl={fbImageUrl}
-          pageToken={fbPageToken}
-        />
-      </Tab.Pane>
-      <Tab.Pane eventKey='insta'>
-        <Posts posts={instaPosts} name={instaName} imageUrl={instaImageUrl} />
-      </Tab.Pane>
-    </Tab.Content>
+    <div>
+      <Col lg={{ span: 6, offset: 3 }} className='timeline-col'>
+        <InputModal fbLogin={fbLogin} instaLogin={instaLogin} />
+        <DropdownButton
+          id='dropdown-media'
+          title={chosenType}
+          className='mb-3 d-flex justify-content-end'
+        >
+          {chosenType !== 'All posts' && (
+            <Dropdown.Item onClick={() => setChosenType('All posts')}>
+              All posts
+            </Dropdown.Item>
+          )}
+          {chosenType !== 'Facebook' && fbLogin && (
+            <Dropdown.Item onClick={() => setChosenType('Facebook')}>
+              Facebook
+            </Dropdown.Item>
+          )}
+          {chosenType !== 'Instagram' && instaLogin && (
+            <Dropdown.Item onClick={() => setChosenType('Instagram')}>
+              Instagram
+            </Dropdown.Item>
+          )}
+        </DropdownButton>
+        {chosenType === 'All posts' && <Posts posts={allPosts} />}
+        {chosenType === 'Facebook' && (
+          <Posts
+            posts={fbPosts}
+            name={fbName}
+            imageUrl={fbImageUrl}
+            pageToken={fbPageToken}
+          />
+        )}
+        {chosenType === 'Instagram' && (
+          <Posts posts={instaPosts} name={instaName} imageUrl={instaImageUrl} />
+        )}
+      </Col>
+    </div>
   );
 };
 
-export default Manage;
+export default Timeline;

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Form, Button, Modal } from 'react-bootstrap';
 import { DateTime } from 'luxon';
 import axios from 'axios';
-import { database } from '../../firebase/firebase';
+import { database } from '../../../firebase/firebase';
 import {
   equalTo,
   orderByChild,
@@ -56,7 +56,6 @@ const EditModal = ({
         });
       }
     );
-    console.log('Im pushing the second time guys!!!');
     const editedPost = {
       facebook_posted: true,
       instagram_posted: false,

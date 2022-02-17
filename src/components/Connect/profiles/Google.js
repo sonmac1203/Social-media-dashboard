@@ -3,8 +3,8 @@ import { Col, Card, Button } from 'react-bootstrap';
 
 const Google = () => {
   return (
-    <Col xl='3'>
-      <Card style={{ width: '260px' }}>
+    <Col md='6' lg={{ span: 6, offset: 3 }}>
+      <Card>
         <Card.Body>
           <Card.Title>
             <div>
@@ -13,7 +13,7 @@ const Google = () => {
             <div>Google My Business</div>
           </Card.Title>
           <Card.Text>Connect to your Google My Business profile</Card.Text>
-          <Button>Add</Button>
+          <Button>Connect</Button>
         </Card.Body>
       </Card>
     </Col>

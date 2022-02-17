@@ -3,8 +3,8 @@ import { Col, Card, Button } from 'react-bootstrap';
 
 const Yelp = () => {
   return (
-    <Col xl='3'>
-      <Card style={{ width: '260px' }}>
+    <Col md='6' lg={{ span: 6, offset: 3 }}>
+      <Card>
         <Card.Body>
           <Card.Title>
             <div>
@@ -13,7 +13,7 @@ const Yelp = () => {
             <div>Yelp</div>
           </Card.Title>
           <Card.Text>Connect to your Yelp profile</Card.Text>
-          <Button>Add</Button>
+          <Button>Connect</Button>
         </Card.Body>
       </Card>
     </Col>

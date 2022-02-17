@@ -2,16 +2,15 @@ import React, { useEffect, useState } from 'react';
 import { Col, Card, Button } from 'react-bootstrap';
 import FacebookLogin from 'react-facebook-login/dist/facebook-login-render-props';
 import axios from 'axios';
-import { database } from '../firebase/firebase';
+import { database } from '../../../firebase/firebase';
 import { ref, set } from 'firebase/database';
 
-const Instagram = ({ login, setLogin }) => {
+const Instagram = ({ login }) => {
   const [userToken, setUserToken] = useState(null);
-  const [accessToken, setAccessToken] = useState(null);
 
   const responseFacebook = (response) => {
     if (response.accessToken) {
-      setLogin(true);
+      // setLogin(true);
       setUserToken(response.accessToken);
     } else {
       // setLogin(false);
@@ -67,12 +66,13 @@ const Instagram = ({ login, setLogin }) => {
   }, [login, userToken]);
 
   return (
-    <Col xl='3'>
-      <Card style={{ width: '260px' }}>
+    <Col md='6' lg={{ span: 6, offset: 3 }}>
+      <Card>
         <Card.Body>
           <Card.Title>
-            <div>
+            <div className='d-flex justify-content-between'>
               <i className='fab fa-instagram mb-2' />
+              <i className='fas fa-check-circle'></i>
             </div>
             <div>Instagram</div>
           </Card.Title>
@@ -85,11 +85,11 @@ const Instagram = ({ login, setLogin }) => {
               scope='public_profile,pages_read_engagement,pages_show_list,instagram_basic,business_management,ads_management,instagram_content_publish'
               callback={responseFacebook}
               render={(renderProps) => (
-                <Button onClick={renderProps.onClick}>Add</Button>
+                <Button onClick={renderProps.onClick}>Connect</Button>
               )}
             />
           )}
-          {login && <Button disabled>Added</Button>}
+          {login && <Button disabled>Disconnect</Button>}
         </Card.Body>
       </Card>
     </Col>

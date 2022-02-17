@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button, Modal } from 'react-bootstrap';
 import axios from 'axios';
-import { database } from '../../firebase/firebase';
+import { database } from '../../../firebase/firebase';
 import {
   equalTo,
   orderByChild,
@@ -23,7 +23,6 @@ const DeleteModal = ({ show, setShow, postId, pageToken }) => {
       },
     };
     await axios.delete(url, params);
-    console.log('done making delete req and started deleting firebase data');
     onValue(
       query(postRef, orderByChild('facebook_post_id'), equalTo(postId)),
       (snapshot) => {

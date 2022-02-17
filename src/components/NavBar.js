@@ -1,23 +1,19 @@
 import React from 'react';
-import { Tabs, Tab } from 'react-bootstrap';
-import Sidebar1 from './Sidebar1';
-import Sidebar2 from './SideBar2';
+import { Link } from 'react-router-dom';
 
 const NavBar = () => {
   return (
     <div>
-      <Tabs
-        defaultActiveKey='home'
-        id='uncontrolled-tab-example'
-        className='d-flex justify-content-center'
-      >
-        <Tab eventKey='home' title='PROFILES'>
-          <Sidebar1 />
-        </Tab>
-        <Tab eventKey='management' title='MANAGEMENT'>
-          <Sidebar2 />
-        </Tab>
-      </Tabs>
+      <ul className='d-flex justify-content-center'>
+        <li className='d-flex align-items-center me-5'>
+          <i className='fas fa-link'></i>
+          <Link to='/'>Connect</Link>
+        </li>
+        <li className='d-flex align-items-center'>
+          <i className='fas fa-stream'></i>
+          <Link to='/timeline'>Timeline</Link>
+        </li>
+      </ul>
     </div>
   );
 };

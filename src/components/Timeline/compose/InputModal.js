@@ -1,19 +1,20 @@
 import React, { useState, useEffect } from 'react';
-import { Form, Button, Modal, DropdownButton, Dropdown } from 'react-bootstrap';
+import {
+  Form,
+  Button,
+  Modal,
+  DropdownButton,
+  Dropdown,
+  Row,
+} from 'react-bootstrap';
 import axios from 'axios';
 import MediaUpload from './MediaUpload';
-import { database } from '../firebase/firebase';
-import {
-  ref,
-  child,
-  get,
-  push,
-  onValue,
-  onChildAdded,
-} from 'firebase/database';
+import { database } from '../../../firebase/firebase';
+import { ref, child, get, push, onChildAdded } from 'firebase/database';
 import { DateTime } from 'luxon';
 
-const InputModal = ({ fbLogin, instaLogin, content, setContent }) => {
+const InputModal = ({ fbLogin, instaLogin }) => {
+  const [content, setContent] = useState('');
   const [show, setShow] = useState(false);
 
   const [fbChosen, setFbChosen] = useState(false);
@@ -101,7 +102,6 @@ const InputModal = ({ fbLogin, instaLogin, content, setContent }) => {
       get(child(dbRef, `instagram`))
         .then(async (snapshot) => {
           if (snapshot.exists()) {
-            console.log('im making a post to instagram');
             const data = snapshot.val();
             let url = `https://graph.facebook.com/v12.0/${data.page_id}/media`;
             let params = {
@@ -121,8 +121,6 @@ const InputModal = ({ fbLogin, instaLogin, content, setContent }) => {
               },
             };
             const postResponse = await axios.post(url, null, params);
-            console.log('insta branch');
-            console.log(postResponse.data);
             setPageInstaPostId(postResponse.data.id);
             alert('INSTAGRAM UPLOAD SUCCESS!!!');
             setInstaPosted(true);
@@ -169,10 +167,11 @@ const InputModal = ({ fbLogin, instaLogin, content, setContent }) => {
   }, [fbPosted, instaPosted]);
 
   return (
-    <div>
-      <Button variant='primary' onClick={handleShow} className='mb-5'>
-        COMPOSE
-      </Button>
+    <Row className='input-row'>
+      <h3>Let's make a post!</h3>
+      <button onClick={handleShow} className='mb-5 post-btn'>
+        What are you posting today?
+      </button>
       <Modal
         show={show}
         onHide={handleClose}
@@ -264,7 +263,7 @@ const InputModal = ({ fbLogin, instaLogin, content, setContent }) => {
           </Button>
         </Modal.Footer>
       </Modal>
-    </div>
+    </Row>
   );
 };
 
