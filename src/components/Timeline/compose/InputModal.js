@@ -6,6 +6,7 @@ import {
   DropdownButton,
   Dropdown,
   Row,
+  Badge,
 } from 'react-bootstrap';
 import axios from 'axios';
 import MediaUpload from './MediaUpload';
@@ -16,24 +17,18 @@ import { DateTime } from 'luxon';
 const InputModal = ({ fbLogin, instaLogin }) => {
   const [content, setContent] = useState('');
   const [show, setShow] = useState(false);
-
   const [fbChosen, setFbChosen] = useState(false);
-
   const [instaChosen, setInstaChosen] = useState(false);
-
   const [imageUrl, setImageUrl] = useState('');
-
   const [fakeImageUrl, setFakeImageUrl] = useState('');
-
   const [rows, setRows] = useState(5);
-
   const [progress, setProgress] = useState(0);
-
   const [fbPosted, setFbPosted] = useState(false);
   const [instaPosted, setInstaPosted] = useState(false);
-
   const [fbName, setFbName] = useState(null);
   const [instaName, setInstaName] = useState(null);
+  const [fbImage, setFbImage] = useState(null);
+  const [instaImage, setInstaImage] = useState(null);
   const [pageFbPostId, setPageFbPostId] = useState('');
   const [pageInstaPostId, setPageInstaPostId] = useState('');
 
@@ -60,7 +55,7 @@ const InputModal = ({ fbLogin, instaLogin }) => {
 
   useEffect(() => {
     if (imageUrl || fakeImageUrl) {
-      setRows(8);
+      setRows(7);
     } else {
       setRows(5);
     }
@@ -136,9 +131,11 @@ const InputModal = ({ fbLogin, instaLogin }) => {
     onChildAdded(ref(database), (data) => {
       if (data.key === 'facebook') {
         setFbName(data.val().name);
+        setFbImage(data.val().profile_picture_url);
       }
       if (data.key === 'instagram') {
         setInstaName(data.val().name);
+        setInstaImage(data.val().profile_picture_url);
       }
     });
   }, []);
@@ -149,7 +146,6 @@ const InputModal = ({ fbLogin, instaLogin }) => {
       (fbChosen && !instaChosen && fbPosted) ||
       (!fbChosen && instaChosen && instaPosted)
     ) {
-      console.log('Im saving the post to db!!!');
       const post = {
         facebook_posted: fbChosen,
         instagram_posted: instaChosen,
@@ -177,23 +173,39 @@ const InputModal = ({ fbLogin, instaLogin }) => {
         onHide={handleClose}
         backdrop='static'
         keyboard={false}
-        size='lg'
+        size='md'
+        animation={false}
       >
         <Modal.Header closeButton>
-          <Modal.Title>Let's make a post!</Modal.Title>
+          <Modal.Title className='input-modal-title ms-2'>
+            Make a new post
+          </Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <div className='mb-2'>
-            {fbChosen && <i className='fab fa-facebook me-2'></i>}
-            {instaChosen && <i className='fab fa-instagram me-2'></i>}
+            {fbChosen && (
+              <Badge className='selected-profile-badge'>
+                <img src={fbImage} className='selected-profile-picture' />
+                {fbName}
+                <i className='fas fa-times' onClick={toggleFb}></i>
+              </Badge>
+            )}
+            {instaChosen && (
+              <Badge className='selected-profile-badge'>
+                <img src={instaImage} className='selected-profile-picture' />
+                {instaName}
+                <i className='fas fa-times' onClick={toggleInsta}></i>
+              </Badge>
+            )}
           </div>
           <div className='compose-input'>
             <Form>
               <Form.Group controlId='update-form'>
                 <Form.Control
                   as='textarea'
-                  placeholder='Enter your content'
+                  placeholder='Type your post here ...'
                   rows={rows}
+                  autoFocus
                   onChange={(e) => setContent(e.target.value)}
                 />
               </Form.Group>
@@ -201,7 +213,7 @@ const InputModal = ({ fbLogin, instaLogin }) => {
             {fakeImageUrl && !imageUrl && (
               <div className='compose-input-fake-photo'>
                 <p>{progress} %</p>
-                <img src={fakeImageUrl} alt='uploaded' height='85px' />
+                <img src={fakeImageUrl} alt='uploaded' height='110px' />
               </div>
             )}
             {imageUrl && (
@@ -209,7 +221,7 @@ const InputModal = ({ fbLogin, instaLogin }) => {
                 className='compose-input-photo'
                 src={imageUrl}
                 alt='uploaded'
-                height='85px'
+                height='110px'
               />
             )}
             <MediaUpload
@@ -223,7 +235,7 @@ const InputModal = ({ fbLogin, instaLogin }) => {
         <Modal.Footer className='d-flex justify-content-between'>
           <DropdownButton
             id='dropdown-basic-button'
-            title='Choose a profile'
+            title='Select a profile'
             autoClose={false}
           >
             {!fbLogin && !instaLogin && (

@@ -33,7 +33,7 @@ i.drop-down-icon {
 
 .compose-input-button {
   position: absolute;
-  font-size: 22px;
+  font-size: 30px;
   bottom: 0;
   margin-left: 12px;
   padding-bottom: 10px;
@@ -44,7 +44,7 @@ i.drop-down-icon {
   position: absolute;
   bottom: 0;
   margin-left: 12px;
-  margin-bottom: 50px;
+  margin-bottom: 55px;
   border-radius: 8px;
 }
 
@@ -87,13 +87,17 @@ h6.facebook-post-time-stamp {
   color: gray;
 }
 
-.update-form textarea {
+form textarea {
   border: none !important;
   outline: none;
 }
 
-.update-form .form-control:focus {
+form .form-control:focus {
   box-shadow: none;
+}
+
+.compose-input .form-control {
+  font-size: 25px;
 }
 
 ul {
@@ -174,4 +178,27 @@ li i {
     #d6249f 60%,
     #285aeb 90%
   ) !important;
+}
+
+.input-modal-title {
+  font-size: 20px;
+}
+
+.selected-profile-picture {
+  width: 25px;
+  border-radius: 50%;
+  margin-right: 7px;
+}
+
+.selected-profile-badge {
+  border-radius: 50px;
+  background-color: #e5e4e2 !important;
+  color: black;
+  margin-right: 10px;
+}
+
+.selected-profile-badge .fas {
+  font-size: 12px;
+  margin-left: 10px;
+  color: grey;
 }
