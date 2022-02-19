@@ -14,7 +14,7 @@ import { database } from '../../../firebase/firebase';
 import { ref, child, get, push, onChildAdded } from 'firebase/database';
 import { DateTime } from 'luxon';
 
-const InputModal = ({ fbLogin, instaLogin }) => {
+const InputModal = ({ fbLogin, instaLogin, profiles }) => {
   const [content, setContent] = useState('');
   const [show, setShow] = useState(false);
   const [fbChosen, setFbChosen] = useState(false);
@@ -238,10 +238,24 @@ const InputModal = ({ fbLogin, instaLogin }) => {
             title='Select a profile'
             autoClose={false}
           >
-            {!fbLogin && !instaLogin && (
+            {/* {!fbLogin && !instaLogin && (
               <Dropdown.Item disabled>Not found</Dropdown.Item>
-            )}
-            {fbLogin && (
+            )} */}
+            {profiles &&
+              profiles.map((profile, k) => {
+                // <Dropdown.Item
+                //   onClick={toggleFb}
+                //   className='d-flex justify-content-between align-items-center'
+                // >
+                //   <div className='d-flex align-items-center'>
+                //     <i className='fab fa-facebook-square me-2 drop-down-icon'></i>
+                //     <strong>{profile.name}</strong>
+                //   </div>
+                //   {/* {fbChosen && <i className='fas fa-check ms-2'></i>} */}
+                // </Dropdown.Item>;
+                <h1>{profile.name}</h1>;
+              })}
+            {/* {fbLogin && (
               <Dropdown.Item
                 onClick={toggleFb}
                 className='d-flex justify-content-between align-items-center'
@@ -264,7 +278,7 @@ const InputModal = ({ fbLogin, instaLogin }) => {
                 </div>
                 {instaChosen && <i className='fas fa-check'></i>}
               </Dropdown.Item>
-            )}
+            )} */}
           </DropdownButton>
           <Button
             variant='primary'

@@ -3,10 +3,12 @@ import { Col, Card, Button } from 'react-bootstrap';
 import FacebookLogin from 'react-facebook-login/dist/facebook-login-render-props';
 import axios from 'axios';
 import { database } from '../../../firebase/firebase';
-import { ref, set } from 'firebase/database';
+import { ref, set, push, child } from 'firebase/database';
+import { useAuth } from '../../../Login/contexts/AuthContext';
 
 const Instagram = ({ login }) => {
   const [userToken, setUserToken] = useState(null);
+  const { currentUser } = useAuth();
 
   const responseFacebook = (response) => {
     if (response.accessToken) {
@@ -18,8 +20,8 @@ const Instagram = ({ login }) => {
   };
 
   useEffect(() => {
-    // if (login && userToken) {
     if (userToken) {
+      const userRef = child(ref(database, 'users'), currentUser.uid);
       (async () => {
         const zeroResponse = await axios.get(
           'https://graph.facebook.com/v12.0/oauth/access_token',
@@ -55,12 +57,24 @@ const Instagram = ({ login }) => {
             },
           }
         );
-        set(ref(database, 'instagram'), {
+        const profile = {
           name: thirdResponse.data.name,
           profile_picture_url: thirdResponse.data.profile_picture_url,
           access_token: zeroResponse.data.access_token,
+          page_token: '',
           page_id: secondResponse.data.instagram_business_account.id,
-        });
+          type: 'instagram',
+        };
+        push(child(userRef, 'profiles_connected'), profile);
+
+        // set(ref(database, 'instagram'), {
+        //   name: thirdResponse.data.name,
+        //   profile_picture_url: thirdResponse.data.profile_picture_url,
+        //   access_token: zeroResponse.data.access_token,
+        //   page_token: '',
+        //   page_id: secondResponse.data.instagram_business_account.id,
+        //   type: 'instagram',
+        // });
       })();
     }
   }, [login, userToken]);

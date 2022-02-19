@@ -3,11 +3,13 @@ import FacebookLogin from 'react-facebook-login/dist/facebook-login-render-props
 import { Col, Card, Button } from 'react-bootstrap';
 import axios from 'axios';
 import { database } from '../../../firebase/firebase';
-import { ref, set } from 'firebase/database';
+import { ref, set, push, child } from 'firebase/database';
+import { useAuth } from '../../../Login/contexts/AuthContext';
 
 const Facebook = ({ login }) => {
   const [shortToken, setShortToken] = useState(null);
   const [userId, setUserId] = useState(null);
+  const { currentUser } = useAuth();
 
   const responseFacebook = (response) => {
     if (response.accessToken) {
@@ -21,6 +23,7 @@ const Facebook = ({ login }) => {
 
   useEffect(() => {
     if (shortToken && userId) {
+      const userRef = child(ref(database, 'users'), currentUser.uid);
       (async () => {
         const firstResponse = await axios.get(
           'https://graph.facebook.com/v12.0/oauth/access_token',
@@ -49,13 +52,23 @@ const Facebook = ({ login }) => {
             },
           }
         );
-        set(ref(database, 'facebook'), {
+        const profile = {
           name: secondResponse.data.data[0].name,
           profile_picture_url: thirdResponse.data.data.url,
           access_token: firstResponse.data.access_token,
           page_token: secondResponse.data.data[0].access_token,
           page_id: secondResponse.data.data[0].id,
-        });
+          type: 'facebook',
+        };
+        push(child(userRef, 'profiles_connected'), profile);
+        // set(ref(database, 'facebook'), {
+        //   name: secondResponse.data.data[0].name,
+        //   profile_picture_url: thirdResponse.data.data.url,
+        //   access_token: firstResponse.data.access_token,
+        //   page_token: secondResponse.data.data[0].access_token,
+        //   page_id: secondResponse.data.data[0].id,
+        //   type: 'facebook',
+        // });
       })();
     }
   }, [shortToken, userId]);
