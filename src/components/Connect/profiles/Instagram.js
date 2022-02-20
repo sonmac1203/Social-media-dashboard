@@ -66,15 +66,6 @@ const Instagram = ({ login }) => {
           type: 'instagram',
         };
         push(child(userRef, 'profiles_connected'), profile);
-
-        // set(ref(database, 'instagram'), {
-        //   name: thirdResponse.data.name,
-        //   profile_picture_url: thirdResponse.data.profile_picture_url,
-        //   access_token: zeroResponse.data.access_token,
-        //   page_token: '',
-        //   page_id: secondResponse.data.instagram_business_account.id,
-        //   type: 'instagram',
-        // });
       })();
     }
   }, [login, userToken]);

@@ -10,47 +10,24 @@ import {
 } from 'react-bootstrap';
 import axios from 'axios';
 import MediaUpload from './MediaUpload';
-import { database } from '../../../firebase/firebase';
-import { ref, child, get, push, onChildAdded } from 'firebase/database';
-import { DateTime } from 'luxon';
 
-const InputModal = ({ fbLogin, instaLogin, profiles }) => {
+const InputModal = ({ profiles }) => {
   const [content, setContent] = useState('');
   const [show, setShow] = useState(false);
-  const [fbChosen, setFbChosen] = useState(false);
-  const [instaChosen, setInstaChosen] = useState(false);
   const [imageUrl, setImageUrl] = useState('');
   const [fakeImageUrl, setFakeImageUrl] = useState('');
   const [rows, setRows] = useState(5);
   const [progress, setProgress] = useState(0);
-  const [fbPosted, setFbPosted] = useState(false);
-  const [instaPosted, setInstaPosted] = useState(false);
-  const [fbName, setFbName] = useState(null);
-  const [instaName, setInstaName] = useState(null);
-  const [fbImage, setFbImage] = useState(null);
-  const [instaImage, setInstaImage] = useState(null);
-  const [pageFbPostId, setPageFbPostId] = useState('');
-  const [pageInstaPostId, setPageInstaPostId] = useState('');
+  const [chosenIndices, setChosenIndices] = useState([]);
 
   const handleClose = () => {
     setShow(false);
     setImageUrl('');
     setFakeImageUrl('');
-    setFbChosen(false);
-    setInstaChosen(false);
+    setChosenIndices([]);
   };
   const handleShow = () => {
     setShow(true);
-    setFbPosted(false);
-    setInstaPosted(false);
-  };
-
-  const toggleInsta = () => {
-    setInstaChosen(!instaChosen);
-  };
-
-  const toggleFb = () => {
-    setFbChosen(!fbChosen);
   };
 
   useEffect(() => {
@@ -61,106 +38,46 @@ const InputModal = ({ fbLogin, instaLogin, profiles }) => {
     }
   }, [imageUrl, fakeImageUrl]);
 
-  const postContent = () => {
-    if (fbLogin && fbChosen) {
-      const dbRef = ref(database);
-      get(child(dbRef, 'facebook'))
-        .then(async (snapshot) => {
-          if (snapshot.exists()) {
-            const data = snapshot.val();
-            const url = `https://graph.facebook.com/${data.page_id}/${
-              imageUrl ? 'photos' : 'feed'
-            }`;
-            const params = {
-              params: {
-                url: imageUrl,
-                message: content,
-                access_token: data.page_token,
-              },
-            };
-            const postResponse = await axios.post(url, null, params);
-            setPageFbPostId(
-              imageUrl.length > 0
-                ? postResponse.data.post_id
-                : postResponse.data.id
-            );
-            alert('FACEBOOK UPLOAD SUCCESS!!!');
-            setFbPosted(true);
-          }
-        })
-        .catch((error) => {
-          console.error(error);
-        });
-    }
-    if (instaLogin && instaChosen) {
-      const dbRef = ref(database);
-      get(child(dbRef, `instagram`))
-        .then(async (snapshot) => {
-          if (snapshot.exists()) {
-            const data = snapshot.val();
-            let url = `https://graph.facebook.com/v12.0/${data.page_id}/media`;
-            let params = {
-              params: {
-                image_url: imageUrl,
-                caption: content,
-                access_token: data.access_token,
-              },
-            };
-            const firstResponse = await axios.post(url, null, params);
+  const postContent = async () => {
+    for (let i = 0; i < chosenIndices.length; i++) {
+      const profile = profiles[i];
+      if (profiles[i].type === 'facebook') {
+        const url = `https://graph.facebook.com/${profile.page_id}/${
+          imageUrl ? 'photos' : 'feed'
+        }`;
+        const params = {
+          params: {
+            url: imageUrl,
+            message: content,
+            access_token: profile.page_token,
+          },
+        };
+        await axios.post(url, null, params);
+        alert('FACEBOOK UPLOAD SUCCESS!!!');
+      } else if (profiles[i].type === 'instagram') {
+        let url = `https://graph.facebook.com/v12.0/${profile.page_id}/media`;
+        let params = {
+          params: {
+            image_url: imageUrl,
+            caption: content,
+            access_token: profile.access_token,
+          },
+        };
+        const firstResponse = await axios.post(url, null, params);
 
-            url = `https://graph.facebook.com/${data.page_id}/media_publish`;
-            params = {
-              params: {
-                creation_id: firstResponse.data.id,
-                access_token: data.access_token,
-              },
-            };
-            const postResponse = await axios.post(url, null, params);
-            setPageInstaPostId(postResponse.data.id);
-            alert('INSTAGRAM UPLOAD SUCCESS!!!');
-            setInstaPosted(true);
-          }
-        })
-        .catch((error) => {
-          console.error(error);
-        });
+        url = `https://graph.facebook.com/${profile.page_id}/media_publish`;
+        params = {
+          params: {
+            creation_id: firstResponse.data.id,
+            access_token: profile.access_token,
+          },
+        };
+        await axios.post(url, null, params);
+        alert('INSTAGRAM UPLOAD SUCCESS!!!');
+      }
     }
+    handleClose();
   };
-
-  useEffect(() => {
-    onChildAdded(ref(database), (data) => {
-      if (data.key === 'facebook') {
-        setFbName(data.val().name);
-        setFbImage(data.val().profile_picture_url);
-      }
-      if (data.key === 'instagram') {
-        setInstaName(data.val().name);
-        setInstaImage(data.val().profile_picture_url);
-      }
-    });
-  }, []);
-
-  useEffect(() => {
-    if (
-      (fbChosen && instaChosen && fbPosted && instaPosted) ||
-      (fbChosen && !instaChosen && fbPosted) ||
-      (!fbChosen && instaChosen && instaPosted)
-    ) {
-      const post = {
-        facebook_posted: fbChosen,
-        instagram_posted: instaChosen,
-        content: content,
-        image: imageUrl,
-        time: DateTime.now().toMillis() * -1,
-        facebook_post_id: pageFbPostId,
-        instagram_post_id: pageInstaPostId,
-      };
-      push(child(ref(database), 'posts'), post);
-      setPageFbPostId('');
-      setPageInstaPostId('');
-      handleClose();
-    }
-  }, [fbPosted, instaPosted]);
 
   return (
     <Row className='input-row'>
@@ -183,20 +100,21 @@ const InputModal = ({ fbLogin, instaLogin, profiles }) => {
         </Modal.Header>
         <Modal.Body>
           <div className='mb-2'>
-            {fbChosen && (
+            {chosenIndices.map((index, key) => (
               <Badge className='selected-profile-badge'>
-                <img src={fbImage} className='selected-profile-picture' />
-                {fbName}
-                <i className='fas fa-times' onClick={toggleFb}></i>
+                <img
+                  src={profiles[index].profile_picture_url}
+                  className='selected-profile-picture'
+                />
+                {profiles[index].name}
+                <i
+                  className='fas fa-times'
+                  onClick={() => {
+                    setChosenIndices(chosenIndices.filter((i) => i !== index));
+                  }}
+                ></i>
               </Badge>
-            )}
-            {instaChosen && (
-              <Badge className='selected-profile-badge'>
-                <img src={instaImage} className='selected-profile-picture' />
-                {instaName}
-                <i className='fas fa-times' onClick={toggleInsta}></i>
-              </Badge>
-            )}
+            ))}
           </div>
           <div className='compose-input'>
             <Form>
@@ -238,53 +156,31 @@ const InputModal = ({ fbLogin, instaLogin, profiles }) => {
             title='Select a profile'
             autoClose={false}
           >
-            {/* {!fbLogin && !instaLogin && (
+            {profiles.map((profile, key) => (
+              <Dropdown.Item
+                className='d-flex justify-content-between align-items-center'
+                key={key}
+                onClick={() => {
+                  if (!chosenIndices.includes(key)) {
+                    setChosenIndices([...chosenIndices, key]);
+                  }
+                }}
+              >
+                <div className='d-flex align-items-center'>
+                  {profile.type === 'facebook' ? (
+                    <i className='fab fa-facebook-square me-2 drop-down-icon'></i>
+                  ) : (
+                    <i className='fab fa-instagram me-2 drop-down-icon'></i>
+                  )}
+                  <strong>{profile.name}</strong>
+                </div>
+              </Dropdown.Item>
+            ))}
+            {profiles.length === 0 && (
               <Dropdown.Item disabled>Not found</Dropdown.Item>
-            )} */}
-            {profiles &&
-              profiles.map((profile, k) => {
-                // <Dropdown.Item
-                //   onClick={toggleFb}
-                //   className='d-flex justify-content-between align-items-center'
-                // >
-                //   <div className='d-flex align-items-center'>
-                //     <i className='fab fa-facebook-square me-2 drop-down-icon'></i>
-                //     <strong>{profile.name}</strong>
-                //   </div>
-                //   {/* {fbChosen && <i className='fas fa-check ms-2'></i>} */}
-                // </Dropdown.Item>;
-                <h1>{profile.name}</h1>;
-              })}
-            {/* {fbLogin && (
-              <Dropdown.Item
-                onClick={toggleFb}
-                className='d-flex justify-content-between align-items-center'
-              >
-                <div className='d-flex align-items-center'>
-                  <i className='fab fa-facebook-square me-2 drop-down-icon'></i>
-                  <strong>{fbName}</strong>
-                </div>
-                {fbChosen && <i className='fas fa-check ms-2'></i>}
-              </Dropdown.Item>
             )}
-            {instaLogin && (
-              <Dropdown.Item
-                onClick={toggleInsta}
-                className='d-flex justify-content-between align-items-center'
-              >
-                <div className='d-flex align-items-center'>
-                  <i className='fab fa-instagram me-2 drop-down-icon'></i>
-                  <strong>{instaName}</strong>
-                </div>
-                {instaChosen && <i className='fas fa-check'></i>}
-              </Dropdown.Item>
-            )} */}
           </DropdownButton>
-          <Button
-            variant='primary'
-            onClick={() => postContent()}
-            disabled={(instaChosen && !imageUrl) || (!fbChosen && !instaChosen)}
-          >
+          <Button variant='primary' onClick={() => postContent()}>
             Post
           </Button>
         </Modal.Footer>

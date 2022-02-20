@@ -61,14 +61,6 @@ const Facebook = ({ login }) => {
           type: 'facebook',
         };
         push(child(userRef, 'profiles_connected'), profile);
-        // set(ref(database, 'facebook'), {
-        //   name: secondResponse.data.data[0].name,
-        //   profile_picture_url: thirdResponse.data.data.url,
-        //   access_token: firstResponse.data.access_token,
-        //   page_token: secondResponse.data.data[0].access_token,
-        //   page_id: secondResponse.data.data[0].id,
-        //   type: 'facebook',
-        // });
       })();
     }
   }, [shortToken, userId]);

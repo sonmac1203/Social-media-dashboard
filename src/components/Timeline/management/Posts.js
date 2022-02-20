@@ -1,17 +1,20 @@
 import React from 'react';
 import Post from './Post';
 
-const Posts = ({ posts, name, imageUrl, pageToken }) => {
+const Posts = ({
+  posts,
+  profile: { name, profile_picture_url, page_token },
+}) => {
   return (
     <div>
-      {posts.length > 0
+      {posts && posts.length > 0
         ? posts.map((post, k) => (
             <Post
               post={post}
               key={k}
-              imageUrl={imageUrl}
+              imageUrl={profile_picture_url}
               name={name}
-              pageToken={pageToken}
+              pageToken={page_token}
             />
           ))
         : 'No post yet'}
