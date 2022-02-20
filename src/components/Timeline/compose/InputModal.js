@@ -11,7 +11,7 @@ import {
 import axios from 'axios';
 import MediaUpload from './MediaUpload';
 
-const InputModal = ({ profiles }) => {
+const InputModal = ({ user, profiles }) => {
   const [content, setContent] = useState('');
   const [show, setShow] = useState(false);
   const [imageUrl, setImageUrl] = useState('');
@@ -81,10 +81,15 @@ const InputModal = ({ profiles }) => {
 
   return (
     <Row className='input-row'>
-      <h3>Let's make a post!</h3>
-      <button onClick={handleShow} className='mb-5 post-btn'>
-        What are you posting today?
-      </button>
+      <div className='d-flex justify-content-center'>
+        <h3>Let's make a post!</h3>
+      </div>
+      <div className='d-flex justify-content-between align-items-center mt-2'>
+        <img src={user.avatar_url} className='input-field-avatar me-3' />
+        <button onClick={handleShow} className='post-btn ps-3'>
+          What are you posting today, {user.name} ?
+        </button>
+      </div>
       <Modal
         show={show}
         onHide={handleClose}

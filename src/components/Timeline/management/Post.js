@@ -17,41 +17,39 @@ const Post = ({ post, imageUrl, name, pageToken }) => {
     <Row className='mb-5 timeline-post-row ps-2 pt-2'>
       <div className='d-flex justify-content-between'>
         <div className='d-flex justify-content-start mt-3 mb-2'>
-          <img
-            src={imageUrl}
-            alt='page-avatar'
-            className='facebook-post-avatar'
-          />
+          <img src={imageUrl} alt='page-avatar' className='post-avatar' />
           <div className='ms-3'>
             <strong>{name}</strong>
-            <h6 className='facebook-post-time-stamp'>{`Posted at ${DateTime.fromISO(
+            <h6 className='post-time-stamp'>{`Posted at ${DateTime.fromISO(
               created_time
             ).toFormat('ff')}`}</h6>
           </div>
         </div>
-        <div className='me-3 mt-3 facebook-post-functions'>
+        <div className='me-3 mt-3 post-functions'>
           {pageToken && (
-            <i className='fas fa-edit' onClick={handleEditShow}></i>
+            <div>
+              <i className='fas fa-edit' onClick={handleEditShow}></i>
+              <i className='fas fa-trash ms-3' onClick={handleDeleteShow}></i>
+            </div>
           )}
-          <i className='fas fa-trash ms-3' onClick={handleDeleteShow}></i>
         </div>
       </div>
       <div>
         <p className='post-content'>{message}</p>
-        {/* <EditModal
+        <EditModal
           show={editShow}
           setShow={setEditShow}
           name={name}
+          imageUrl={imageUrl}
           post={post}
           pageToken={pageToken}
-          imageUrl={imageUrl}
         />
         <DeleteModal
           show={deleteShow}
           setShow={setDeleteShow}
-          postId={facebook_post_id}
+          postId={post.id}
           pageToken={pageToken}
-        /> */}
+        />
       </div>
       {picture && (
         <img

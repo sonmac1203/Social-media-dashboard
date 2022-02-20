@@ -36,10 +36,11 @@ const Signup = () => {
     if (signedUp && currentUser) {
       const userRef = ref(database, 'users');
       set(child(userRef, currentUser.uid), {
-        name: '',
+        name: 'unknown',
         email: currentUser.email,
         created_at: currentUser.metadata.createdAt,
-        avatar_url: '',
+        avatar_url:
+          'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png',
         profiles_connected: '',
       });
     }

@@ -1,25 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../Login/contexts/AuthContext';
-import { Col, Card, Button, Alert } from 'react-bootstrap';
-import { Link, useNavigate } from 'react-router-dom';
+import { Col, Card, Row } from 'react-bootstrap';
 import { database } from '../../firebase/firebase';
-import { ref, query, onValue, equalTo, orderByKey } from 'firebase/database';
+import {
+  ref,
+  query,
+  onValue,
+  equalTo,
+  orderByKey,
+  child,
+} from 'firebase/database';
+import ConnectedProfile from './ConnectedProfile';
 
 export const Profile = () => {
-  const [error, setError] = useState('');
-  const { currentUser, logOut } = useAuth();
-  const navigate = useNavigate();
-  const [email, setEmail] = useState(null);
-
-  const handleLogout = async () => {
-    setError('');
-    try {
-      await logOut();
-    } catch {
-      setError('Failed to logout!!!');
-    }
-    navigate('/login');
-  };
+  const { currentUser } = useAuth();
+  const [user, setUser] = useState({});
+  const [profiles, setProfiles] = useState(null);
 
   useEffect(() => {
     const userRef = ref(database, 'users');
@@ -28,34 +24,54 @@ export const Profile = () => {
       (snapshot) => {
         if (snapshot.exists()) {
           snapshot.forEach((item) => {
-            setEmail(item.val().email);
+            setUser(item.val());
           });
         }
       }
     );
+
+    const profileRef = child(
+      child(ref(database, 'users'), currentUser.uid),
+      'profiles_connected'
+    );
+    onValue(profileRef, (snapshot) => {
+      const profileList = [];
+      if (snapshot.exists()) {
+        snapshot.forEach((item) => {
+          profileList.push(item.val());
+        });
+        setProfiles(profileList);
+      }
+    });
   }, []);
 
   return (
-    <div>
-      <Col lg={{ span: 6, offset: 3 }}>
-        <Card>
-          <Card.Body>
-            <h2 className='text-center mb-4'>Profile</h2>
-            {error && <Alert variant='danger'>{error}</Alert>}
-            {email && (
-              <div>
-                <strong>Email:</strong>
-                {email}
+    user && (
+      <Col lg={{ span: 4, offset: 4 }}>
+        <Row className='mt-4'>
+          <Card>
+            <Card.Body>
+              <div className='d-flex justify-content-center mb-2 mt-3'>
+                <img
+                  src={user.avatar_url}
+                  alt='profile avatar'
+                  className='profile-avatar'
+                />
               </div>
-            )}
-          </Card.Body>
-        </Card>
-        <div className='w-100 text-center mt-2'>
-          <Button variant='link' onClick={handleLogout}>
-            Log Out
-          </Button>
-        </div>
+              <div className='d-flex justify-content-center'>
+                <h2>{user.name}</h2>
+              </div>
+              <div className='d-flex justify-content-center mb-2'>
+                <h6>{user.email}</h6>
+              </div>
+            </Card.Body>
+          </Card>
+        </Row>
+        {profiles &&
+          profiles.map((profile, key) => (
+            <ConnectedProfile profile={profile} key={key} />
+          ))}
       </Col>
-    </div>
+    )
   );
 };
