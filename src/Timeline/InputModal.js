@@ -112,7 +112,7 @@ const InputModal = ({ user, profiles }) => {
         <Modal.Body>
           <div className='mb-2'>
             {chosenIndices.map((index, key) => (
-              <Badge className='selected-profile-badge'>
+              <Badge className='selected-profile-badge' key={key}>
                 <img
                   src={profiles[index].profile_picture_url}
                   className='selected-profile-picture'

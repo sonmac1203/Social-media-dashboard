@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../Login/AuthContext';
-import { Col, Card, Row } from 'react-bootstrap';
+import { Col, Card, Row, Button } from 'react-bootstrap';
 import { database } from '../firebase/firebase';
 import { ref, onValue, child } from 'firebase/database';
 import ConnectedProfile from './ConnectedProfile';
 import EditProfileModal from './EditProfileModal';
+import { Link } from 'react-router-dom';
 
 export const Profile = () => {
   const { currentUser } = useAuth();
@@ -66,11 +67,18 @@ export const Profile = () => {
             <ConnectedProfile profile={profile} key={key} />
           ))}
         {profiles && (
-          <div className='d-flex justify-content-center mb-3'>
-            <h6>
-              {profiles.length} connected
-              {profiles.length > 1 ? ' profiles' : ' profile'}
-            </h6>
+          <div>
+            <div className='d-flex justify-content-center mb-2'>
+              <h6>
+                {profiles.length} connected
+                {profiles.length > 1 ? ' profiles' : ' profile'}
+              </h6>
+            </div>
+            <div className='d-flex justify-content-center mb-3'>
+              <Link to='/connect'>
+                <Button>GET STARTED</Button>
+              </Link>
+            </div>
           </div>
         )}
       </Col>

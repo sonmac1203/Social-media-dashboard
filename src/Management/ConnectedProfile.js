@@ -71,8 +71,14 @@ const ConnectedProfile = ({ profile }) => {
           ></i>
         </div>
       </div>
-      <Modal show={show} onHide={handleClose} backdrop='static' size='sm'>
-        <Modal.Body>Deleting this post?</Modal.Body>
+      <Modal
+        show={show}
+        onHide={handleClose}
+        backdrop='static'
+        size='sm'
+        centered
+      >
+        <Modal.Body>Deleting this profile?</Modal.Body>
         <Modal.Footer>
           <Button variant='secondary' onClick={handleClose}>
             No
