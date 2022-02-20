@@ -2,9 +2,9 @@ import React, { useEffect, useState } from 'react';
 import FacebookLogin from 'react-facebook-login/dist/facebook-login-render-props';
 import { Col, Card, Button } from 'react-bootstrap';
 import axios from 'axios';
-import { database } from '../../../firebase/firebase';
-import { ref, set, push, child } from 'firebase/database';
-import { useAuth } from '../../../Login/contexts/AuthContext';
+import { database } from '../firebase/firebase';
+import { ref, push, child } from 'firebase/database';
+import { useAuth } from '../Login/AuthContext';
 
 const Facebook = ({ login }) => {
   const [shortToken, setShortToken] = useState(null);
@@ -13,11 +13,8 @@ const Facebook = ({ login }) => {
 
   const responseFacebook = (response) => {
     if (response.accessToken) {
-      // setLogin(true);
       setShortToken(response.accessToken);
       setUserId(response.userID);
-    } else {
-      // setLogin(false);
     }
   };
 
@@ -70,16 +67,13 @@ const Facebook = ({ login }) => {
       <Card>
         <Card.Body>
           <Card.Title>
-            <div className='d-flex justify-content-between'>
-              <i className='fab fa-facebook-square mb-2' />
-              <i className='fas fa-check-circle'></i>
-            </div>
+            <i className='fab fa-facebook-square mb-2' />
             <div>Facebook</div>
           </Card.Title>
           <Card.Text>Connect to your Facebook profile</Card.Text>
           {!login && (
             <FacebookLogin
-              appId='959795267956866'
+              appId={process.env.REACT_APP_FACEBOOK_ID}
               scope='public_profile,pages_manage_posts,pages_read_engagement,pages_show_list'
               callback={responseFacebook}
               render={(renderProps) => (

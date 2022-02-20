@@ -1,34 +1,24 @@
 import React, { useState, useEffect } from 'react';
-import { useAuth } from '../../Login/contexts/AuthContext';
+import { useAuth } from '../Login/AuthContext';
 import { Col, Card, Row } from 'react-bootstrap';
-import { database } from '../../firebase/firebase';
-import {
-  ref,
-  query,
-  onValue,
-  equalTo,
-  orderByKey,
-  child,
-} from 'firebase/database';
+import { database } from '../firebase/firebase';
+import { ref, onValue, child } from 'firebase/database';
 import ConnectedProfile from './ConnectedProfile';
+import EditProfileModal from './EditProfileModal';
 
 export const Profile = () => {
   const { currentUser } = useAuth();
   const [user, setUser] = useState({});
   const [profiles, setProfiles] = useState(null);
 
+  const [show, setShow] = useState(false);
+  const handleShow = () => setShow(true);
+
   useEffect(() => {
     const userRef = ref(database, 'users');
-    onValue(
-      query(userRef, orderByKey(), equalTo(currentUser.uid)),
-      (snapshot) => {
-        if (snapshot.exists()) {
-          snapshot.forEach((item) => {
-            setUser(item.val());
-          });
-        }
-      }
-    );
+    onValue(child(userRef, currentUser.uid), (user) => {
+      setUser(user.val());
+    });
 
     const profileRef = child(
       child(ref(database, 'users'), currentUser.uid),
@@ -64,6 +54,10 @@ export const Profile = () => {
               <div className='d-flex justify-content-center mb-2'>
                 <h6>{user.email}</h6>
               </div>
+              <div className='d-flex justify-content-center mb-2'>
+                <i className='fas fa-user-edit' onClick={handleShow}></i>
+              </div>
+              <EditProfileModal user={user} show={show} setShow={setShow} />
             </Card.Body>
           </Card>
         </Row>
@@ -71,6 +65,14 @@ export const Profile = () => {
           profiles.map((profile, key) => (
             <ConnectedProfile profile={profile} key={key} />
           ))}
+        {profiles && (
+          <div className='d-flex justify-content-center mb-3'>
+            <h6>
+              {profiles.length} connected
+              {profiles.length > 1 ? ' profiles' : ' profile'}
+            </h6>
+          </div>
+        )}
       </Col>
     )
   );

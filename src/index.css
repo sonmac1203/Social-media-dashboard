@@ -119,12 +119,6 @@ li a {
   text-decoration: none;
 }
 
-/* .container {
-  padding-left: 300px;
-  padding-right: 300px;
-  border: 1px solid red;
-} */
-
 .timeline-col {
   margin-top: 23px;
 }
@@ -205,7 +199,12 @@ li i {
   color: grey;
 }
 
-img.profile-avatar {
+img.profile-avatar,
+.profile-avatar-edit {
   height: 100px;
   border-radius: 50%;
+}
+
+.profile-avatar-edit:hover {
+  filter: brightness(85%);
 }

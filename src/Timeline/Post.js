@@ -20,9 +20,9 @@ const Post = ({ post, imageUrl, name, pageToken }) => {
           <img src={imageUrl} alt='page-avatar' className='post-avatar' />
           <div className='ms-3'>
             <strong>{name}</strong>
-            <h6 className='post-time-stamp'>{`Posted at ${DateTime.fromISO(
-              created_time
-            ).toFormat('ff')}`}</h6>
+            <h6 className='post-time-stamp'>
+              Posted at {DateTime.fromISO(created_time).toFormat('ff')}
+            </h6>
           </div>
         </div>
         <div className='me-3 mt-3 post-functions'>

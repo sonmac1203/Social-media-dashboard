@@ -1,9 +1,9 @@
 import React from 'react';
 import { Row } from 'react-bootstrap';
-import Facebook from './profiles/Facebook';
-import Google from './profiles/Google';
-import Instagram from './profiles/Instagram';
-import Yelp from './profiles/Yelp';
+import Facebook from './Facebook';
+import Google from './Google';
+import Instagram from './Instagram';
+import Yelp from './Yelp';
 
 const Connect = ({ fbLogin, instaLogin }) => {
   return (

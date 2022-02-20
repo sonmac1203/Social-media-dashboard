@@ -1,16 +1,16 @@
 import React, { useState } from 'react';
 import { Modal, Button, Tabs, Tab, Form } from 'react-bootstrap';
-import { storage } from '../../../firebase/firebase';
+import { storage } from '../firebase/firebase';
 import { ref, uploadBytesResumable, getDownloadURL } from '@firebase/storage';
 
 const MediaUpload = ({
+  show,
+  setShow,
   setImageUrl,
   setFakeImageUrl,
   fakeImageUrl,
   setProgress,
 }) => {
-  const [show, setShow] = useState(false);
-  const handleShow = () => setShow(true);
   const [selectedImage, setSelectedImage] = useState(null);
 
   const [key, setKey] = useState('upload');
@@ -30,10 +30,8 @@ const MediaUpload = ({
     if (key === 'upload') {
       if (selectedImage) {
         setFakeImageUrl(URL.createObjectURL(selectedImage));
-
         const storageRef = ref(storage, `/images/${selectedImage.name}`);
         const uploadTask = uploadBytesResumable(storageRef, selectedImage);
-
         uploadTask.on(
           'state_changed',
           (snapshot) => {
@@ -53,14 +51,11 @@ const MediaUpload = ({
     } else if (key === 'link') {
       setImageUrl(fakeImageUrl);
     }
+    handleClose();
   };
 
   return (
     <div>
-      <i
-        className='fas fa-file-image compose-input-button'
-        onClick={handleShow}
-      ></i>
       <Modal
         show={show}
         onHide={handleClose}

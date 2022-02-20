@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Row, Badge, Modal, Button } from 'react-bootstrap';
-import { useAuth } from '../../Login/contexts/AuthContext';
-import { database } from '../../firebase/firebase';
+import { useAuth } from '../Login/AuthContext';
+import { database } from '../firebase/firebase';
 import { ref, onValue, child, set } from 'firebase/database';
 
 const ConnectedProfile = ({ profile }) => {
@@ -18,12 +18,19 @@ const ConnectedProfile = ({ profile }) => {
       'profiles_connected'
     );
     onValue(profileRef, (snapshot) => {
-      snapshot.forEach((item) => {
-        if (item.val().page_id === id) {
-          set(child(profileRef, item.key), null);
-        }
-      });
+      if (snapshot.exists()) {
+        snapshot.forEach((item) => {
+          if (item.val().page_id === id) {
+            if (Object.keys(snapshot.val()).length > 1) {
+              set(child(profileRef, item.key), null);
+            } else {
+              set(profileRef, '');
+            }
+          }
+        });
+      }
     });
+    handleClose();
   };
 
   return (

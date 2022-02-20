@@ -1,11 +1,11 @@
 import React from 'react';
-import Connect from './components/Connect/Connect';
-import Timeline from './components/Timeline/Timeline';
+import Connect from './Connect/Connect';
+import Timeline from './Timeline/Timeline';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Signup from './Login/Signup';
-import { AuthProvider } from './Login/contexts/AuthContext';
+import { AuthProvider } from './Login/AuthContext';
 import Login from './Login/Login';
-import { Profile } from './components/Management/Profile';
+import { Profile } from './Management/Profile';
 import PrivateRoute from './Login/PrivateRoute';
 
 function App() {

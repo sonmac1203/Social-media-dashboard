@@ -2,9 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { Col, Card, Button } from 'react-bootstrap';
 import FacebookLogin from 'react-facebook-login/dist/facebook-login-render-props';
 import axios from 'axios';
-import { database } from '../../../firebase/firebase';
-import { ref, set, push, child } from 'firebase/database';
-import { useAuth } from '../../../Login/contexts/AuthContext';
+import { database } from '../firebase/firebase';
+import { ref, push, child } from 'firebase/database';
+import { useAuth } from '../Login/AuthContext';
 
 const Instagram = ({ login }) => {
   const [userToken, setUserToken] = useState(null);
@@ -12,10 +12,7 @@ const Instagram = ({ login }) => {
 
   const responseFacebook = (response) => {
     if (response.accessToken) {
-      // setLogin(true);
       setUserToken(response.accessToken);
-    } else {
-      // setLogin(false);
     }
   };
 
@@ -75,16 +72,13 @@ const Instagram = ({ login }) => {
       <Card>
         <Card.Body>
           <Card.Title>
-            <div className='d-flex justify-content-between'>
-              <i className='fab fa-instagram mb-2' />
-              <i className='fas fa-check-circle'></i>
-            </div>
+            <i className='fab fa-instagram mb-2' />
             <div>Instagram</div>
           </Card.Title>
           <Card.Text>Connect to your Instagram profile</Card.Text>
           {!login && (
             <FacebookLogin
-              appId='959795267956866'
+              appId={process.env.REACT_APP_FACEBOOK_ID}
               autoLoad={true}
               fields='name'
               scope='public_profile,pages_read_engagement,pages_show_list,instagram_basic,business_management,ads_management,instagram_content_publish'

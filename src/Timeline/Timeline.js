@@ -1,17 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { database } from '../../firebase/firebase';
-import {
-  ref,
-  child,
-  onValue,
-  query,
-  orderByKey,
-  equalTo,
-} from 'firebase/database';
+import { database } from '../firebase/firebase';
+import { ref, child, onValue } from 'firebase/database';
 import { Dropdown, DropdownButton, Col } from 'react-bootstrap';
-import Posts from './management/Posts';
-import InputModal from './compose/InputModal';
-import { useAuth } from '../../Login/contexts/AuthContext';
+import Posts from './Posts';
+import InputModal from './InputModal';
+import { useAuth } from '../Login/AuthContext';
 import axios from 'axios';
 
 const Timeline = () => {
@@ -53,16 +46,9 @@ const Timeline = () => {
 
   useEffect(() => {
     const userRef = ref(database, 'users');
-    onValue(
-      query(userRef, orderByKey(), equalTo(currentUser.uid)),
-      (snapshot) => {
-        if (snapshot.exists()) {
-          snapshot.forEach((item) => {
-            setUser(item.val());
-          });
-        }
-      }
-    );
+    onValue(child(userRef, currentUser.uid), (user) => {
+      setUser(user.val());
+    });
 
     const profileRef = child(
       child(ref(database, 'users'), currentUser.uid),

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Navigate, Outlet } from 'react-router-dom';
-import { useAuth } from './contexts/AuthContext';
-import NavBar from '../components/NavBar';
+import { useAuth } from './AuthContext';
+import NavBar from '../NavBar';
 
 const PrivateRoute = () => {
   const { currentUser } = useAuth();

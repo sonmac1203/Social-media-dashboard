@@ -20,6 +20,8 @@ const InputModal = ({ user, profiles }) => {
   const [progress, setProgress] = useState(0);
   const [chosenIndices, setChosenIndices] = useState([]);
 
+  const [showMediaUpload, setShowMediaUpload] = useState(false);
+  const handleShowMediaUpload = () => setShowMediaUpload(true);
   const handleClose = () => {
     setShow(false);
     setImageUrl('');
@@ -85,7 +87,11 @@ const InputModal = ({ user, profiles }) => {
         <h3>Let's make a post!</h3>
       </div>
       <div className='d-flex justify-content-between align-items-center mt-2'>
-        <img src={user.avatar_url} className='input-field-avatar me-3' />
+        <img
+          src={user.avatar_url}
+          className='input-field-avatar me-3'
+          alt='avatar'
+        />
         <button onClick={handleShow} className='post-btn ps-3'>
           What are you posting today, {user.name} ?
         </button>
@@ -110,6 +116,7 @@ const InputModal = ({ user, profiles }) => {
                 <img
                   src={profiles[index].profile_picture_url}
                   className='selected-profile-picture'
+                  alt='avatar'
                 />
                 {profiles[index].name}
                 <i
@@ -147,7 +154,13 @@ const InputModal = ({ user, profiles }) => {
                 height='110px'
               />
             )}
+            <i
+              className='fas fa-file-image compose-input-button'
+              onClick={handleShowMediaUpload}
+            ></i>
             <MediaUpload
+              show={showMediaUpload}
+              setShow={setShowMediaUpload}
               setImageUrl={setImageUrl}
               setFakeImageUrl={setFakeImageUrl}
               fakeImageUrl={fakeImageUrl}

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button, Modal } from 'react-bootstrap';
 import axios from 'axios';
-import { database } from '../../../firebase/firebase';
+import { database } from '../firebase/firebase';
 import {
   equalTo,
   orderByChild,
