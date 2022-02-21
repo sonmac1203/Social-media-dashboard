@@ -2,15 +2,6 @@ body {
   background-color: #e5e4e2;
 }
 
-.tab-column {
-  min-height: 100vh;
-  min-width: 10px;
-  border: 1px solid #dee2e6;
-  border-top: none;
-  border-left: none;
-  padding-right: 0;
-}
-
 .nav-link {
   color: black;
 }
@@ -102,13 +93,6 @@ form .form-control:focus {
   font-size: 25px;
 }
 
-ul {
-  list-style-type: none;
-  margin: 0;
-  padding: 0;
-  overflow: hidden;
-  background-color: white;
-}
 li a {
   display: block;
   color: black;
@@ -117,16 +101,6 @@ li a {
   padding-bottom: 20px;
   padding-left: 8px;
   text-decoration: none;
-}
-
-.timeline-col {
-  margin-top: 23px;
-}
-
-.timeline-post-row,
-.profile-row {
-  background-color: white;
-  border-radius: 10px;
 }
 
 .card {
@@ -159,6 +133,27 @@ li i {
   margin-bottom: 20px;
   padding: 25px 20px;
   border-radius: 10px;
+}
+
+.input-row,
+.timeline-post-row,
+.profile-row,
+#dropdown-media.btn-primary,
+.connect-row,
+ul.navbar,
+.login-card,
+.signup-card {
+  background-color: white;
+  box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+  border-radius: 10px;
+}
+
+ul.navbar {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  border-radius: 0;
 }
 
 .fb-badge {
@@ -207,4 +202,20 @@ img.profile-avatar,
 
 .profile-avatar-edit:hover {
   filter: brightness(85%);
+}
+
+#dropdown-media.btn-primary {
+  background-color: white;
+  color: black;
+  border: none;
+  padding: 10px 20px;
+}
+
+#dropdown-media.btn-primary:focus {
+  box-shadow: none;
+}
+
+.spinner-grow {
+  height: 1rem;
+  width: 1rem;
 }

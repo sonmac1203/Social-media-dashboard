@@ -40,7 +40,7 @@ export const Profile = () => {
     user && (
       <Col lg={{ span: 4, offset: 4 }}>
         <Row className='mt-4'>
-          <Card>
+          <Card className='connect-row'>
             <Card.Body>
               <div className='d-flex justify-content-center mb-2 mt-3'>
                 <img

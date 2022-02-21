@@ -4,7 +4,7 @@ import { Col, Card, Button } from 'react-bootstrap';
 const Google = () => {
   return (
     <Col md='6' lg={{ span: 6, offset: 3 }}>
-      <Card>
+      <Card className='connect-row'>
         <Card.Body>
           <Card.Title>
             <div>

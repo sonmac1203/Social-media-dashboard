@@ -33,12 +33,12 @@ const Login = () => {
       style={{ minHeight: '100vh' }}
     >
       <div className='w-100' style={{ maxWidth: '400px' }}>
-        <Card>
+        <Card className='login-card'>
           <Card.Body>
             <h2 className='text-center mb-4'>Log In</h2>
             {failed && <Alert variant='danger'>Please try again !!!</Alert>}
             <Form onSubmit={handleSubmit}>
-              <Form.Group id='email'>
+              <Form.Group id='email' className='mb-2'>
                 <Form.Label>Email</Form.Label>
                 <Form.Control type='email' ref={emailRef} required />
               </Form.Group>

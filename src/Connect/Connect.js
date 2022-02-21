@@ -7,14 +7,12 @@ import Yelp from './Yelp';
 
 const Connect = ({ fbLogin, instaLogin }) => {
   return (
-    <div className='mt-4'>
-      <Row>
-        <Facebook login={fbLogin} />
-        <Instagram login={instaLogin} />
-        <Google />
-        <Yelp />
-      </Row>
-    </div>
+    <Row className='mt-4'>
+      <Facebook login={fbLogin} />
+      <Instagram login={instaLogin} />
+      <Google />
+      <Yelp />
+    </Row>
   );
 };
 

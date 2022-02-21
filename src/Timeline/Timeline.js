@@ -16,32 +16,36 @@ const Timeline = () => {
   const [user, setUser] = useState({});
   const [loading, setLoading] = useState(false);
 
-  useEffect(async () => {
+  useEffect(() => {
     if (profiles && profiles.length > 0 && chosenIndex !== null) {
       const profile = profiles[chosenIndex];
       if (profile.type === 'facebook') {
-        const response = await axios.get(
-          `https://graph.facebook.com/${profile.page_id}/feed`,
-          {
-            params: {
-              access_token: profile.access_token,
-              fields:
-                'picture,message,created_time,likes.summary(true).limit(0),comments.summary(true).limit(0)',
-            },
-          }
-        );
-        setPosts(response.data.data);
+        (async () => {
+          const response = await axios.get(
+            `https://graph.facebook.com/${profile.page_id}/feed`,
+            {
+              params: {
+                access_token: profile.access_token,
+                fields:
+                  'picture,message,created_time,likes.summary(true).limit(0),comments.summary(true).limit(0)',
+              },
+            }
+          );
+          setPosts(response.data.data);
+        })();
       } else if (profile.type === 'instagram') {
-        const response = await axios.get(
-          `https://graph.facebook.com/${profile.page_id}/media`,
-          {
-            params: {
-              access_token: profile.access_token,
-              fields: 'caption,media_url,timestamp,like_count,comments_count',
-            },
-          }
-        );
-        setPosts(response.data.data);
+        (async () => {
+          const response = await axios.get(
+            `https://graph.facebook.com/${profile.page_id}/media`,
+            {
+              params: {
+                access_token: profile.access_token,
+                fields: 'caption,media_url,timestamp,like_count,comments_count',
+              },
+            }
+          );
+          setPosts(response.data.data);
+        })();
       }
       setLoading(false);
     }

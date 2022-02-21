@@ -19,6 +19,7 @@ const InputModal = ({ user, profiles, setLoading }) => {
   const [rows, setRows] = useState(5);
   const [progress, setProgress] = useState(0);
   const [chosenIndices, setChosenIndices] = useState([]);
+  const [instaChosen, setInstaChosen] = useState(false);
 
   const [showMediaUpload, setShowMediaUpload] = useState(false);
   const handleShowMediaUpload = () => setShowMediaUpload(true);
@@ -83,7 +84,7 @@ const InputModal = ({ user, profiles, setLoading }) => {
   };
 
   return (
-    <Row className='input-row'>
+    <Row className='input-row mt-4'>
       <div className='d-flex justify-content-center'>
         <h3>Let's make a post!</h3>
       </div>
@@ -183,6 +184,9 @@ const InputModal = ({ user, profiles, setLoading }) => {
                   if (!chosenIndices.includes(key)) {
                     setChosenIndices([...chosenIndices, key]);
                   }
+                  if (profile.type === 'instagram') {
+                    setInstaChosen(true);
+                  }
                 }}
               >
                 <div className='d-flex align-items-center'>
@@ -199,7 +203,15 @@ const InputModal = ({ user, profiles, setLoading }) => {
               <Dropdown.Item disabled>Not found</Dropdown.Item>
             )}
           </DropdownButton>
-          <Button variant='primary' onClick={() => postContent()}>
+          <Button
+            variant='primary'
+            disabled={
+              chosenIndices.length === 0 ||
+              !content ||
+              (instaChosen && !imageUrl)
+            }
+            onClick={() => postContent()}
+          >
             Post
           </Button>
         </Modal.Footer>

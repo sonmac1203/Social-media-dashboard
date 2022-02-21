@@ -64,7 +64,7 @@ const Facebook = ({ login }) => {
 
   return (
     <Col md='6' lg={{ span: 6, offset: 3 }}>
-      <Card>
+      <Card className='connect-row'>
         <Card.Body>
           <Card.Title>
             <i className='fab fa-facebook-square mb-2' />

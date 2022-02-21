@@ -18,7 +18,7 @@ const NavBar = () => {
 
   return (
     <div>
-      <ul>
+      <ul className='navbar'>
         <Col
           lg={{ offset: 3, span: 6 }}
           className='d-flex justify-content-between'
