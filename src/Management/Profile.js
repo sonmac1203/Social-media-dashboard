@@ -67,18 +67,18 @@ export const Profile = () => {
             <ConnectedProfile profile={profile} key={key} />
           ))}
         {profiles && (
-          <div>
-            <div className='d-flex justify-content-center mb-2'>
-              <h6>
-                {profiles.length} connected
-                {profiles.length > 1 ? ' profiles' : ' profile'}
-              </h6>
-            </div>
-            <div className='d-flex justify-content-center mb-3'>
-              <Link to='/connect'>
-                <Button>GET STARTED</Button>
-              </Link>
-            </div>
+          <div className='d-flex justify-content-center mb-2'>
+            <h6>
+              {profiles.length} connected
+              {profiles.length > 1 ? ' profiles' : ' profile'}
+            </h6>
+          </div>
+        )}
+        {!profiles && (
+          <div className='d-flex justify-content-center mb-3'>
+            <Link to='/connect'>
+              <Button>GET STARTED</Button>
+            </Link>
           </div>
         )}
       </Col>

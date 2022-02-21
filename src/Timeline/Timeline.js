@@ -14,6 +14,7 @@ const Timeline = () => {
   const [chosenIndex, setChosenIndex] = useState(0);
   const [chosenProfile, setChosenProfile] = useState('');
   const [user, setUser] = useState({});
+  const [loading, setLoading] = useState(false);
 
   useEffect(async () => {
     if (profiles && profiles.length > 0 && chosenIndex !== null) {
@@ -24,7 +25,8 @@ const Timeline = () => {
           {
             params: {
               access_token: profile.access_token,
-              fields: 'picture,message,created_time',
+              fields:
+                'picture,message,created_time,likes.summary(true).limit(0),comments.summary(true).limit(0)',
             },
           }
         );
@@ -35,14 +37,15 @@ const Timeline = () => {
           {
             params: {
               access_token: profile.access_token,
-              fields: 'caption,media_url,timestamp',
+              fields: 'caption,media_url,timestamp,like_count,comments_count',
             },
           }
         );
         setPosts(response.data.data);
       }
+      setLoading(false);
     }
-  }, [chosenIndex, profiles]);
+  }, [chosenIndex, profiles, loading]);
 
   useEffect(() => {
     const userRef = ref(database, 'users');
@@ -74,7 +77,7 @@ const Timeline = () => {
     <Col lg={{ span: 6, offset: 3 }} className='timeline-col'>
       {profiles && profiles.length > 0 ? (
         <div>
-          <InputModal user={user} profiles={profiles} />
+          <InputModal user={user} profiles={profiles} setLoading={setLoading} />
           <DropdownButton
             id='dropdown-media'
             title={chosenProfile}

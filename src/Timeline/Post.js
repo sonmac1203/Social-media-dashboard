@@ -8,6 +8,12 @@ const Post = ({ post, imageUrl, name, pageToken }) => {
   const message = post.message ? post.message : post.caption;
   const picture = post.picture ? post.picture : post.media_url;
   const created_time = post.created_time ? post.created_time : post.timestamp;
+  const likeCount = post.likes
+    ? post.likes.summary.total_count
+    : post.like_count;
+  const commentsCount = post.comments
+    ? post.comments.summary.total_count
+    : post.comments_count;
   const [editShow, setEditShow] = useState(false);
   const handleEditShow = () => setEditShow(true);
   const [deleteShow, setDeleteShow] = useState(false);
@@ -58,6 +64,16 @@ const Post = ({ post, imageUrl, name, pageToken }) => {
           className='post-image mb-4'
         />
       )}
+      <div className='mb-3 d-flex justify-content-start ms-2'>
+        <div className='d-flex align-items-center me-3'>
+          <i className='fas fa-heart me-1' style={{ fontSize: '20px' }}></i>
+          {likeCount}
+        </div>
+        <div className='d-flex align-items-center'>
+          <i className='fas fa-comment me-1' style={{ fontSize: '20px' }}></i>
+          {commentsCount}
+        </div>
+      </div>
     </Row>
   );
 };

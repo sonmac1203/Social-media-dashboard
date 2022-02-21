@@ -11,7 +11,7 @@ import {
 import axios from 'axios';
 import MediaUpload from './MediaUpload';
 
-const InputModal = ({ user, profiles }) => {
+const InputModal = ({ user, profiles, setLoading }) => {
   const [content, setContent] = useState('');
   const [show, setShow] = useState(false);
   const [imageUrl, setImageUrl] = useState('');
@@ -79,6 +79,7 @@ const InputModal = ({ user, profiles }) => {
       }
     }
     handleClose();
+    setLoading(true);
   };
 
   return (
