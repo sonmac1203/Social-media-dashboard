@@ -18,6 +18,10 @@ const Posts = ({
             pageToken={page_token}
           />
         ))
+      ) : posts.length === 0 ? (
+        <div className='d-flex justify-content-center'>
+          <h6> No post found on this profile </h6>
+        </div>
       ) : (
         <div className='d-flex justify-content-center'>
           <Loading />

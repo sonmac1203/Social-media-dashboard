@@ -74,13 +74,14 @@ export const Profile = () => {
             </h6>
           </div>
         )}
-        {!profiles && (
-          <div className='d-flex justify-content-center mb-3'>
-            <Link to='/connect'>
-              <Button>GET STARTED</Button>
-            </Link>
-          </div>
-        )}
+        {!profiles ||
+          (profiles.length === 0 && (
+            <div className='d-flex justify-content-center mb-3'>
+              <Link to='/connect'>
+                <Button>GET STARTED</Button>
+              </Link>
+            </div>
+          ))}
       </Col>
     )
   );
