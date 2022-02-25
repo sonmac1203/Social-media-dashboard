@@ -28,6 +28,7 @@ const InputModal = ({ user, profiles, setLoading }) => {
     setImageUrl('');
     setFakeImageUrl('');
     setChosenIndices([]);
+    setInstaChosen(false);
   };
   const handleShow = () => {
     setShow(true);
@@ -42,9 +43,9 @@ const InputModal = ({ user, profiles, setLoading }) => {
   }, [imageUrl, fakeImageUrl]);
 
   const postContent = async () => {
-    for (let i = 0; i < chosenIndices.length; i++) {
-      const profile = profiles[i];
-      if (profiles[i].type === 'facebook') {
+    for (const index of chosenIndices) {
+      const profile = profiles[index];
+      if (profile.type === 'facebook') {
         const url = `https://graph.facebook.com/${profile.page_id}/${
           imageUrl ? 'photos' : 'feed'
         }`;
@@ -57,7 +58,7 @@ const InputModal = ({ user, profiles, setLoading }) => {
         };
         await axios.post(url, null, params);
         alert('FACEBOOK UPLOAD SUCCESS!!!');
-      } else if (profiles[i].type === 'instagram') {
+      } else if (profile.type === 'instagram') {
         let url = `https://graph.facebook.com/v12.0/${profile.page_id}/media`;
         let params = {
           params: {
