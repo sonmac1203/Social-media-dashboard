@@ -10,6 +10,11 @@ import {
 } from 'react-bootstrap';
 import axios from 'axios';
 import MediaUpload from './MediaUpload';
+import DateTimePicker from 'react-datetime-picker';
+import { ref, set, child } from 'firebase/database';
+import { database } from '../firebase/firebase';
+import { useAuth } from '../Login/AuthContext';
+import { ToastContainer, toast } from 'react-toastify';
 
 const InputModal = ({ user, profiles, setLoading }) => {
   const [content, setContent] = useState('');
@@ -20,6 +25,12 @@ const InputModal = ({ user, profiles, setLoading }) => {
   const [progress, setProgress] = useState(0);
   const [chosenIndices, setChosenIndices] = useState([]);
   const [instaChosen, setInstaChosen] = useState(false);
+  const { currentUser } = useAuth();
+  const [time, setTime] = useState(new Date());
+  const [pickerShown, setPickerShown] = useState(false);
+  const togglePicker = () => {
+    setPickerShown(!pickerShown);
+  };
 
   const [showMediaUpload, setShowMediaUpload] = useState(false);
   const handleShowMediaUpload = () => setShowMediaUpload(true);
@@ -29,6 +40,8 @@ const InputModal = ({ user, profiles, setLoading }) => {
     setFakeImageUrl('');
     setChosenIndices([]);
     setInstaChosen(false);
+    setPickerShown(false);
+    setTime(new Date());
   };
   const handleShow = () => {
     setShow(true);
@@ -42,7 +55,7 @@ const InputModal = ({ user, profiles, setLoading }) => {
     }
   }, [imageUrl, fakeImageUrl]);
 
-  const postContent = async () => {
+  const makePost = async () => {
     for (const index of chosenIndices) {
       const profile = profiles[index];
       if (profile.type === 'facebook') {
@@ -56,8 +69,8 @@ const InputModal = ({ user, profiles, setLoading }) => {
             access_token: profile.page_token,
           },
         };
+        console.log('hihi');
         await axios.post(url, null, params);
-        alert('FACEBOOK UPLOAD SUCCESS!!!');
       } else if (profile.type === 'instagram') {
         let url = `https://graph.facebook.com/v12.0/${profile.page_id}/media`;
         let params = {
@@ -68,7 +81,6 @@ const InputModal = ({ user, profiles, setLoading }) => {
           },
         };
         const firstResponse = await axios.post(url, null, params);
-
         url = `https://graph.facebook.com/${profile.page_id}/media_publish`;
         params = {
           params: {
@@ -77,11 +89,58 @@ const InputModal = ({ user, profiles, setLoading }) => {
           },
         };
         await axios.post(url, null, params);
-        alert('INSTAGRAM UPLOAD SUCCESS!!!');
       }
     }
+    toast.success('Your post has been published!');
     handleClose();
     setLoading(true);
+  };
+
+  const schedulePost = async () => {
+    const scheduledPostRef = child(
+      child(ref(database, 'users'), currentUser.uid),
+      'scheduled_posts'
+    );
+    if (instaChosen) {
+      toast.error('Please only chedule a Facebook post. Please try again.');
+    } else {
+      const currentTime = Math.floor(new Date().getTime() / 1000);
+      const chosenTime = Math.floor(time.getTime() / 1000);
+      if (chosenTime - currentTime < 900) {
+        toast.error(
+          'Please schedule the post at least 15 minutes from the current time.'
+        );
+      } else {
+        for (const index of chosenIndices) {
+          const profile = profiles[index];
+
+          const url = `https://graph.facebook.com/${profile.page_id}/${
+            imageUrl ? 'photos' : 'feed'
+          }`;
+          const params = {
+            params: {
+              message: content,
+              url: imageUrl,
+              published: false,
+              scheduled_publish_time: chosenTime,
+              access_token: profile.page_token,
+            },
+          };
+          const response = await axios.post(url, null, params);
+          console.log(response.data);
+          const postId = imageUrl
+            ? profile.page_id + '_' + response.data.id
+            : response.data.id;
+          set(child(scheduledPostRef, postId), {
+            account_name: profile.name,
+            page_token: profile.page_token,
+            scheduled_time: chosenTime,
+          });
+          toast.success('Your post has been scheduled!');
+          handleClose();
+        }
+      }
+    }
   };
 
   return (
@@ -171,52 +230,69 @@ const InputModal = ({ user, profiles, setLoading }) => {
             />
           </div>
         </Modal.Body>
-        <Modal.Footer className='d-flex justify-content-between'>
-          <DropdownButton
-            id='dropdown-basic-button'
-            title='Select a profile'
-            autoClose={false}
-          >
-            {profiles.map((profile, key) => (
-              <Dropdown.Item
-                className='d-flex justify-content-between align-items-center'
-                key={key}
-                onClick={() => {
-                  if (!chosenIndices.includes(key)) {
-                    setChosenIndices([...chosenIndices, key]);
-                  }
-                  if (profile.type === 'instagram') {
-                    setInstaChosen(true);
-                  }
-                }}
+        <Modal.Footer className='d-flex justify-content-between align-items-end'>
+          <div>
+            <div className='d-flex justify-contents-start align-items-center'>
+              <DropdownButton
+                id='dropdown-basic-button'
+                title='Select a profile'
+                autoClose={false}
               >
-                <div className='d-flex align-items-center'>
-                  {profile.type === 'facebook' ? (
-                    <i className='fab fa-facebook-square me-2 drop-down-icon'></i>
-                  ) : (
-                    <i className='fab fa-instagram me-2 drop-down-icon'></i>
-                  )}
-                  <strong>{profile.name}</strong>
-                </div>
-              </Dropdown.Item>
-            ))}
-            {profiles.length === 0 && (
-              <Dropdown.Item disabled>Not found</Dropdown.Item>
+                {profiles.map((profile, key) => (
+                  <Dropdown.Item
+                    className='d-flex justify-content-between align-items-center'
+                    key={key}
+                    onClick={() => {
+                      if (!chosenIndices.includes(key)) {
+                        setChosenIndices([...chosenIndices, key]);
+                      }
+                      if (profile.type === 'instagram') {
+                        setInstaChosen(true);
+                      }
+                    }}
+                  >
+                    <div className='d-flex align-items-center'>
+                      {profile.type === 'facebook' ? (
+                        <i className='fab fa-facebook-square me-2 drop-down-icon'></i>
+                      ) : (
+                        <i className='fab fa-instagram me-2 drop-down-icon'></i>
+                      )}
+                      {profile.name}
+                    </div>
+                  </Dropdown.Item>
+                ))}
+                {profiles.length === 0 && (
+                  <Dropdown.Item disabled>Not found</Dropdown.Item>
+                )}
+              </DropdownButton>
+              <i
+                className='far fa-calendar-check ms-3'
+                style={{ fontSize: 35 }}
+                onClick={togglePicker}
+              ></i>
+            </div>
+            {pickerShown && (
+              <DateTimePicker
+                onChange={setTime}
+                value={time}
+                className='mt-3'
+              />
             )}
-          </DropdownButton>
+          </div>
+
           <Button
-            variant='primary'
             disabled={
               chosenIndices.length === 0 ||
               !content ||
               (instaChosen && !imageUrl)
             }
-            onClick={() => postContent()}
+            onClick={pickerShown ? schedulePost : makePost}
           >
-            Post
+            {pickerShown ? 'Schedule' : 'Post'}
           </Button>
         </Modal.Footer>
       </Modal>
+      <ToastContainer />
     </Row>
   );
 };

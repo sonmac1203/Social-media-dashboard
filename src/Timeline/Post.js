@@ -27,7 +27,7 @@ const Post = ({ post, imageUrl, name, pageToken }) => {
           <div className='ms-3'>
             <strong>{name}</strong>
             <h6 className='post-time-stamp'>
-              Posted at {DateTime.fromISO(created_time).toFormat('ff')}
+              Published at {DateTime.fromISO(created_time).toFormat('ff')}
             </h6>
           </div>
         </div>

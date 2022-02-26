@@ -6,6 +6,7 @@ import Posts from './Posts';
 import InputModal from './InputModal';
 import { useAuth } from '../Login/AuthContext';
 import axios from 'axios';
+import ScheduledPosts from './ScheduledPosts';
 
 const Timeline = () => {
   const [profiles, setProfiles] = useState(null);
@@ -15,6 +16,7 @@ const Timeline = () => {
   const [chosenProfile, setChosenProfile] = useState('');
   const [user, setUser] = useState({});
   const [loading, setLoading] = useState(false);
+  const [scheduleChosen, setScheduleChosen] = useState(false);
 
   useEffect(() => {
     if (profiles && profiles.length > 0 && chosenIndex !== null) {
@@ -97,6 +99,7 @@ const Timeline = () => {
                     onClick={() => {
                       setChosenIndex(key);
                       setChosenProfile(profile.name);
+                      setScheduleChosen(false);
                     }}
                   >
                     <div className='d-flex align-items-center'>
@@ -105,18 +108,32 @@ const Timeline = () => {
                       ) : (
                         <i className='fab fa-instagram me-2 drop-down-icon'></i>
                       )}
-                      <strong>{profile.name}</strong>
+                      {profile.name}
                     </div>
                   </Dropdown.Item>
                 )
+            )}
+            {chosenProfile !== 'Scheduled posts' && (
+              <Dropdown.Item
+                onClick={() => {
+                  setScheduleChosen(true);
+                  setChosenProfile('Scheduled posts');
+                }}
+              >
+                <div className='d-flex align-items-center'>
+                  <i className='far fa-calendar-alt drop-down-icon me-2'></i>
+                  Scheduled posts
+                </div>
+              </Dropdown.Item>
             )}
             {profiles.length === 0 && (
               <Dropdown.Item disabled>Not found</Dropdown.Item>
             )}
           </DropdownButton>
-          {posts !== null && chosenIndex !== null && (
+          {posts !== null && chosenIndex !== null && !scheduleChosen && (
             <Posts posts={posts} profile={profiles[chosenIndex]} />
           )}
+          {scheduleChosen && <ScheduledPosts />}
         </div>
       ) : (
         <div className='d-flex justify-content-center'>
