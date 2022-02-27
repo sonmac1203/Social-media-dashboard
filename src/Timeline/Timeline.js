@@ -1,28 +1,31 @@
 import React, { useState, useEffect } from 'react';
 import { database } from '../firebase/firebase';
 import { ref, child, onValue } from 'firebase/database';
-import { Dropdown, DropdownButton, Col } from 'react-bootstrap';
+import { Dropdown, DropdownButton, Col, Button } from 'react-bootstrap';
 import Posts from './Posts';
 import InputModal from './InputModal';
 import { useAuth } from '../Login/AuthContext';
 import axios from 'axios';
 import ScheduledPosts from './ScheduledPosts';
+import { Link } from 'react-router-dom';
 
 const Timeline = () => {
-  const [profiles, setProfiles] = useState(null);
+  const [profiles, setProfiles] = useState([]);
   const { currentUser } = useAuth();
-  const [posts, setPosts] = useState([]);
+  const [posts, setPosts] = useState(null);
   const [chosenIndex, setChosenIndex] = useState(0);
   const [chosenProfile, setChosenProfile] = useState('');
   const [user, setUser] = useState({});
-  const [loading, setLoading] = useState(false);
+  const [reload, setReload] = useState(false);
   const [scheduleChosen, setScheduleChosen] = useState(false);
+  const [fetching, setFetching] = useState(true);
 
   useEffect(() => {
     if (profiles && profiles.length > 0 && chosenIndex !== null) {
       const profile = profiles[chosenIndex];
       if (profile.type === 'facebook') {
         (async () => {
+          setFetching(true);
           const response = await axios.get(
             `https://graph.facebook.com/${profile.page_id}/feed`,
             {
@@ -34,9 +37,11 @@ const Timeline = () => {
             }
           );
           setPosts(response.data.data);
+          setFetching(false);
         })();
       } else if (profile.type === 'instagram') {
         (async () => {
+          setFetching(true);
           const response = await axios.get(
             `https://graph.facebook.com/${profile.page_id}/media`,
             {
@@ -47,11 +52,12 @@ const Timeline = () => {
             }
           );
           setPosts(response.data.data);
+          setFetching(false);
         })();
       }
-      setLoading(false);
+      setReload(false);
     }
-  }, [chosenIndex, profiles, loading]);
+  }, [chosenIndex, profiles, reload]);
 
   useEffect(() => {
     const userRef = ref(database, 'users');
@@ -63,6 +69,7 @@ const Timeline = () => {
       child(ref(database, 'users'), currentUser.uid),
       'profiles_connected'
     );
+
     onValue(profileRef, (snapshot) => {
       if (snapshot.exists()) {
         const profileList = [];
@@ -81,9 +88,9 @@ const Timeline = () => {
 
   return (
     <Col lg={{ span: 6, offset: 3 }} className='timeline-col'>
+      <InputModal user={user} profiles={profiles} setReload={setReload} />
       {profiles && profiles.length > 0 ? (
         <div>
-          <InputModal user={user} profiles={profiles} setLoading={setLoading} />
           <DropdownButton
             id='dropdown-media'
             title={chosenProfile}
@@ -126,18 +133,25 @@ const Timeline = () => {
                 </div>
               </Dropdown.Item>
             )}
-            {profiles.length === 0 && (
-              <Dropdown.Item disabled>Not found</Dropdown.Item>
-            )}
           </DropdownButton>
           {posts !== null && chosenIndex !== null && !scheduleChosen && (
-            <Posts posts={posts} profile={profiles[chosenIndex]} />
+            <Posts
+              posts={posts}
+              profile={profiles[chosenIndex]}
+              fetching={fetching}
+              setReload={setReload}
+            />
           )}
           {scheduleChosen && <ScheduledPosts />}
         </div>
       ) : (
-        <div className='d-flex justify-content-center'>
-          <h3>Please connect to a profile</h3>
+        <div className='d-flex flex-column align-items-center mt-5'>
+          <h6 className='text-center mb-3'>
+            You have not connected to any profile.
+          </h6>
+          <Link to='/connect'>
+            <Button>GET STARTED</Button>
+          </Link>
         </div>
       )}
     </Col>

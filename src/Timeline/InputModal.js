@@ -16,7 +16,7 @@ import { database } from '../firebase/firebase';
 import { useAuth } from '../Login/AuthContext';
 import { ToastContainer, toast } from 'react-toastify';
 
-const InputModal = ({ user, profiles, setLoading }) => {
+const InputModal = ({ user, profiles, setReload }) => {
   const [content, setContent] = useState('');
   const [show, setShow] = useState(false);
   const [imageUrl, setImageUrl] = useState('');
@@ -69,7 +69,7 @@ const InputModal = ({ user, profiles, setLoading }) => {
             access_token: profile.page_token,
           },
         };
-        console.log('hihi');
+
         await axios.post(url, null, params);
       } else if (profile.type === 'instagram') {
         let url = `https://graph.facebook.com/v12.0/${profile.page_id}/media`;
@@ -93,7 +93,7 @@ const InputModal = ({ user, profiles, setLoading }) => {
     }
     toast.success('Your post has been published!');
     handleClose();
-    setLoading(true);
+    setReload(true);
   };
 
   const schedulePost = async () => {
@@ -127,7 +127,6 @@ const InputModal = ({ user, profiles, setLoading }) => {
             },
           };
           const response = await axios.post(url, null, params);
-          console.log(response.data);
           const postId = imageUrl
             ? profile.page_id + '_' + response.data.id
             : response.data.id;
@@ -145,9 +144,7 @@ const InputModal = ({ user, profiles, setLoading }) => {
 
   return (
     <Row className='input-row mt-4'>
-      <div className='d-flex justify-content-center'>
-        <h3>Let's make a post!</h3>
-      </div>
+      <h3 className='text-center'>Let's make a post!</h3>
       <div className='d-flex justify-content-between align-items-center mt-2'>
         <img
           src={user.avatar_url}
@@ -155,7 +152,7 @@ const InputModal = ({ user, profiles, setLoading }) => {
           alt='avatar'
         />
         <button onClick={handleShow} className='post-btn ps-3'>
-          What are you posting today, {user.name} ?
+          What are you posting today, {user.name}?
         </button>
       </div>
       <Modal

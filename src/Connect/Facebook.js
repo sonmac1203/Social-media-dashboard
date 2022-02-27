@@ -6,7 +6,7 @@ import { database } from '../firebase/firebase';
 import { ref, push, child } from 'firebase/database';
 import { useAuth } from '../Login/AuthContext';
 
-const Facebook = ({ login }) => {
+const Facebook = () => {
   const [shortToken, setShortToken] = useState(null);
   const [userId, setUserId] = useState(null);
   const { currentUser } = useAuth();
@@ -71,17 +71,14 @@ const Facebook = ({ login }) => {
             <div>Facebook</div>
           </Card.Title>
           <Card.Text>Connect to your Facebook profile</Card.Text>
-          {!login && (
-            <FacebookLogin
-              appId={process.env.REACT_APP_FACEBOOK_ID}
-              scope='public_profile,pages_manage_posts,pages_read_engagement,pages_show_list'
-              callback={responseFacebook}
-              render={(renderProps) => (
-                <Button onClick={renderProps.onClick}>Connect</Button>
-              )}
-            />
-          )}
-          {login && <Button disabled>Disconnect</Button>}
+          <FacebookLogin
+            appId={process.env.REACT_APP_FACEBOOK_ID}
+            scope='public_profile,pages_manage_posts,pages_read_engagement,pages_show_list'
+            callback={responseFacebook}
+            render={(renderProps) => (
+              <Button onClick={renderProps.onClick}>Connect</Button>
+            )}
+          />
         </Card.Body>
       </Card>
     </Col>

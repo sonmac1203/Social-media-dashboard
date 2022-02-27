@@ -5,11 +5,11 @@ import Google from './Google';
 import Instagram from './Instagram';
 import Yelp from './Yelp';
 
-const Connect = ({ fbLogin, instaLogin }) => {
+const Connect = () => {
   return (
     <Row className='mt-4'>
-      <Facebook login={fbLogin} />
-      <Instagram login={instaLogin} />
+      <Facebook />
+      <Instagram />
       <Google />
       <Yelp />
     </Row>

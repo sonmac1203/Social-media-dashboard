@@ -37,9 +37,7 @@ const ScheduledPosts = () => {
       {posts && posts.length > 0 ? (
         posts.map((post, key) => <ScheduledPost post={post} key={key} />)
       ) : (
-        <div className='d-flex justify-content-center'>
-          <h6>No post has been scheduled yet.</h6>
-        </div>
+        <h6 className='text-center'>No post has been scheduled yet.</h6>
       )}
     </>
   );
@@ -65,34 +63,33 @@ const ScheduledPost = ({
       setIsPublished(response.data.is_published);
     })();
   }, []);
+
   return (
-    <>
-      {!isPublished && (
-        <Row className='mb-5 timeline-post-row ps-2 pt-2'>
-          <div className='ms-2 mt-2'>
-            <div className='d-flex justify-content-start align-items-center'>
-              <i
-                className='fab fa-facebook me-2'
-                style={{ fontSize: 23, color: '#1778f2' }}
-              ></i>
-              <strong style={{ fontSize: 23 }}>{accountName}</strong>
-              <h6 className='scheduled-post-time-stamp'>
-                Publishing at
-                {' ' + DateTime.fromSeconds(scheduledTime).toFormat('ff')}
-              </h6>
-            </div>
-            <p className='mt-2 scheduled-post-content'>{message}</p>
+    !isPublished && (
+      <Row className='mb-5 timeline-post-row ps-2 pt-2'>
+        <div className='px-2 mt-2'>
+          <h6 className='scheduled-post-time-stamp'>
+            Publishing at
+            {' ' + DateTime.fromSeconds(scheduledTime).toFormat('ff')}
+          </h6>
+          <div>
+            <i
+              className='fab fa-facebook me-2'
+              style={{ fontSize: 23, color: '#1778f2' }}
+            ></i>
+            <strong style={{ fontSize: 23 }}>{accountName}</strong>
           </div>
-          {image && (
-            <img
-              src={image}
-              alt='uploaded with this post'
-              className='post-image mb-4'
-            />
-          )}
-        </Row>
-      )}
-    </>
+        </div>
+        <p className='mt-2 scheduled-post-content'>{message}</p>
+        {image && (
+          <img
+            src={image}
+            alt='uploaded with this post'
+            className='post-image mb-4'
+          />
+        )}
+      </Row>
+    )
   );
 };
 

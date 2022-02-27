@@ -4,7 +4,7 @@ import { DateTime } from 'luxon';
 import EditModal from './EditModal';
 import DeleteModal from './DeleteModal';
 
-const Post = ({ post, imageUrl, name, pageToken }) => {
+const Post = ({ post, imageUrl, name, pageToken, setReload }) => {
   const message = post.message ? post.message : post.caption;
   const picture = post.picture ? post.picture : post.media_url;
   const created_time = post.created_time ? post.created_time : post.timestamp;
@@ -49,12 +49,14 @@ const Post = ({ post, imageUrl, name, pageToken }) => {
           imageUrl={imageUrl}
           post={post}
           pageToken={pageToken}
+          setReload={setReload}
         />
         <DeleteModal
           show={deleteShow}
           setShow={setDeleteShow}
           postId={post.id}
           pageToken={pageToken}
+          setReload={setReload}
         />
       </div>
       {picture && (
@@ -64,15 +66,17 @@ const Post = ({ post, imageUrl, name, pageToken }) => {
           className='post-image mb-4'
         />
       )}
-      <div className='mb-3 d-flex justify-content-start ms-2'>
-        <div className='d-flex align-items-center me-3'>
-          <i className='fas fa-heart me-1' style={{ fontSize: '20px' }}></i>
-          {likeCount}
-        </div>
-        <div className='d-flex align-items-center'>
-          <i className='fas fa-comment me-1' style={{ fontSize: '20px' }}></i>
-          {commentsCount}
-        </div>
+      <div className='ms-2 mb-3'>
+        <i
+          className='fas fa-heart me-1'
+          style={{ fontSize: '20px', color: '#C60C30' }}
+        ></i>
+        {likeCount}
+        <i
+          className='fas fa-comment me-1 ms-3'
+          style={{ fontSize: '20px', color: '#71797E' }}
+        ></i>
+        {commentsCount}
       </div>
     </Row>
   );

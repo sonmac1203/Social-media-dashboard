@@ -1,8 +1,9 @@
 import React from 'react';
 import { Button, Modal } from 'react-bootstrap';
 import axios from 'axios';
+import { ToastContainer, toast } from 'react-toastify';
 
-const DeleteModal = ({ show, setShow, postId, pageToken }) => {
+const DeleteModal = ({ show, setShow, postId, pageToken, setReload }) => {
   const handleClose = () => setShow(false);
   const handleDelete = async () => {
     const url = `https://graph.facebook.com/${postId}`;
@@ -12,8 +13,9 @@ const DeleteModal = ({ show, setShow, postId, pageToken }) => {
       },
     };
     await axios.delete(url, params);
-    alert('FACEBOOK DELETE SUCCESS!!!');
+    toast.success('This post has been deleted!');
     setShow(false);
+    setReload(true);
   };
 
   return (
@@ -27,6 +29,7 @@ const DeleteModal = ({ show, setShow, postId, pageToken }) => {
           Yes
         </Button>
       </Modal.Footer>
+      <ToastContainer />
     </Modal>
   );
 };

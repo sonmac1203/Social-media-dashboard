@@ -6,7 +6,7 @@ import { database } from '../firebase/firebase';
 import { ref, push, child } from 'firebase/database';
 import { useAuth } from '../Login/AuthContext';
 
-const Instagram = ({ login }) => {
+const Instagram = () => {
   const [userToken, setUserToken] = useState(null);
   const { currentUser } = useAuth();
 
@@ -65,7 +65,7 @@ const Instagram = ({ login }) => {
         push(child(userRef, 'profiles_connected'), profile);
       })();
     }
-  }, [login, userToken]);
+  }, [userToken]);
 
   return (
     <Col md='6' lg={{ span: 6, offset: 3 }}>
@@ -76,19 +76,17 @@ const Instagram = ({ login }) => {
             <div>Instagram</div>
           </Card.Title>
           <Card.Text>Connect to your Instagram profile</Card.Text>
-          {!login && (
-            <FacebookLogin
-              appId={process.env.REACT_APP_FACEBOOK_ID}
-              autoLoad={true}
-              fields='name'
-              scope='public_profile,pages_read_engagement,pages_show_list,instagram_basic,business_management,ads_management,instagram_content_publish'
-              callback={responseFacebook}
-              render={(renderProps) => (
-                <Button onClick={renderProps.onClick}>Connect</Button>
-              )}
-            />
-          )}
-          {login && <Button disabled>Disconnect</Button>}
+
+          <FacebookLogin
+            appId={process.env.REACT_APP_FACEBOOK_ID}
+            autoLoad={true}
+            fields='name'
+            scope='public_profile,pages_read_engagement,pages_show_list,instagram_basic,business_management,ads_management,instagram_content_publish'
+            callback={responseFacebook}
+            render={(renderProps) => (
+              <Button onClick={renderProps.onClick}>Connect</Button>
+            )}
+          />
         </Card.Body>
       </Card>
     </Col>

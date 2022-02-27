@@ -35,8 +35,8 @@ const ConnectedProfile = ({ profile }) => {
 
   return (
     <Row className='profile-row mb-4 py-3'>
-      <div className='justify-content-between d-flex'>
-        <div className='d-flex justify-content-start'>
+      <div className='d-flex justify-content-between'>
+        <div className='d-flex'>
           <img
             src={profile.profile_picture_url}
             alt='profile avatar'
@@ -66,7 +66,7 @@ const ConnectedProfile = ({ profile }) => {
         <div>
           <i
             className='fas fa-trash ms-3'
-            style={{ fontSize: '20px' }}
+            style={{ fontSize: '20px', cursor: 'pointer' }}
             onClick={handleShow}
           ></i>
         </div>

@@ -17,34 +17,31 @@ const NavBar = () => {
   };
 
   return (
-    <div>
-      <ul className='navbar'>
-        <Col
-          lg={{ offset: 3, span: 6 }}
-          className='d-flex justify-content-between'
-        >
-          <div className='d-flex justify-content-start'>
-            <li className='d-flex align-items-center me-4'>
-              <i className='fas fa-address-card'></i>
-              <Link to='/'>Home</Link>
-            </li>
-            <li className='d-flex align-items-center me-4'>
-              <i className='fas fa-link'></i>
-              <Link to='/connect'>Connect</Link>
-            </li>
-            <li className='d-flex align-items-center'>
-              <i className='fas fa-stream'></i>
-              <Link to='/timeline'>Timeline</Link>
-            </li>
-          </div>
-          <div className='d-flex align-items-center'>
-            <li>
-              <i className='fas fa-sign-out-alt' onClick={handleLogout}></i>
-            </li>
-          </div>
-        </Col>
-      </ul>
-    </div>
+    <ul className='navbar'>
+      <Col
+        lg={{ offset: 3, span: 6 }}
+        className='d-flex justify-content-evenly'
+      >
+        <li className='d-flex align-items-center me-4 navbar-list'>
+          <i className='fas fa-stream'></i>
+          <Link to='/'>Timeline</Link>
+        </li>
+        <li className='d-flex align-items-center me-4 navbar-list'>
+          <i className='fas fa-link'></i>
+          <Link to='/connect'>Connect</Link>
+        </li>
+        <li className='d-flex align-items-center me-4 navbar-list'>
+          <i className='fas fa-user'></i>
+          <Link to='/profile'>Profile</Link>
+        </li>
+        <li className='d-flex align-items-center navbar-list'>
+          <i className='fas fa-door-open me-2'></i>
+          <span onClick={handleLogout} style={{ cursor: 'pointer' }}>
+            Log out
+          </span>
+        </li>
+      </Col>
+    </ul>
   );
 };
 

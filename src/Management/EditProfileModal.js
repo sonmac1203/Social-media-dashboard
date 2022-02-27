@@ -7,18 +7,18 @@ import { useAuth } from '../Login/AuthContext';
 
 const EditProfileModal = ({ user, show, setShow }) => {
   const { currentUser } = useAuth();
-  const handleClose = () => {
-    setShow(false);
-    setImageUrl('');
-    setFakeImageUrl('');
-  };
   const [imageUrl, setImageUrl] = useState('');
   const [fakeImageUrl, setFakeImageUrl] = useState('');
   const [showMediaUpload, setShowMediaUpload] = useState(false);
   const handleShowMediaUpload = () => setShowMediaUpload(true);
   const [progress, setProgress] = useState(0);
-
   const [newName, setNewName] = useState('');
+
+  const handleClose = () => {
+    setShow(false);
+    setImageUrl('');
+    setFakeImageUrl('');
+  };
 
   const handleSave = () => {
     const userRef = ref(database, 'users');
@@ -32,6 +32,7 @@ const EditProfileModal = ({ user, show, setShow }) => {
         name: newName,
       });
     }
+    handleClose();
   };
 
   return (
@@ -49,18 +50,24 @@ const EditProfileModal = ({ user, show, setShow }) => {
               }
               alt='profile avatar'
               className='profile-avatar-edit'
-              onClick={handleShowMediaUpload}
               style={fakeImageUrl && !imageUrl ? { opacity: '50%' } : {}}
             />
           </div>
           {fakeImageUrl && !imageUrl && (
-            <div className='d-flex justify-content-center'>
-              <p>{progress} %</p>
-            </div>
+            <div className='d-flex justify-content-center'>{progress} %</div>
           )}
+          <div className='d-flex justify-content-center mt-3'>
+            <Button
+              variant='outline-secondary text-center'
+              onClick={handleShowMediaUpload}
+            >
+              <i className='fas fa-upload me-2' style={{ fontSize: 20 }}></i>
+              Upload
+            </Button>
+          </div>
           <Form>
             <Form.Group className='mb-3' controlId='edit-username-form'>
-              <Form.Label>Display Name</Form.Label>
+              <Form.Label>Name</Form.Label>
               <Form.Control
                 type='text'
                 defaultValue={user.name}
@@ -71,7 +78,7 @@ const EditProfileModal = ({ user, show, setShow }) => {
               </Form.Text>
             </Form.Group>
             <Form.Group className='mb-3' controlId='edit-email-form'>
-              <Form.Label>Email Address</Form.Label>
+              <Form.Label>Email</Form.Label>
               <Form.Control type='text' defaultValue={user.email} disabled />
               <Form.Text className='text-muted'>
                 We currently do not support changing email.

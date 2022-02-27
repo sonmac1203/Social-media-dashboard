@@ -59,9 +59,9 @@ const MediaUpload = ({
       <Modal
         show={show}
         onHide={handleClose}
-        centered
         size='md'
         backdrop='static'
+        style={{ marginTop: '50vh' }}
       >
         <Modal.Body>
           <Tabs

@@ -1,28 +1,28 @@
 import React, { useRef, useState } from 'react';
-import { Card, Form, Button, Alert, Container } from 'react-bootstrap';
+import { Card, Form, Button, Container } from 'react-bootstrap';
 import { useAuth } from './AuthContext';
 import { Link, useNavigate } from 'react-router-dom';
+import { ToastContainer, toast } from 'react-toastify';
 
 const Login = () => {
   const emailRef = useRef();
   const passwordRef = useRef();
   const { logIn } = useAuth();
-  const [failed, setFailed] = useState(false);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    let failed = false;
     try {
       setLoading(true);
-      setFailed(false);
       await logIn(emailRef.current.value, passwordRef.current.value);
     } catch (error) {
-      console.log(error);
-      setFailed(true);
-    } finally {
-      setLoading(false);
+      failed = true;
+      toast.error(error.message);
+    }
+    setLoading(false);
+    if (!failed) {
       navigate('/');
     }
   };
@@ -36,7 +36,6 @@ const Login = () => {
         <Card className='login-card'>
           <Card.Body>
             <h2 className='text-center mb-4'>Log In</h2>
-            {failed && <Alert variant='danger'>Please try again !!!</Alert>}
             <Form onSubmit={handleSubmit}>
               <Form.Group id='email' className='mb-2'>
                 <Form.Label>Email</Form.Label>
@@ -56,6 +55,7 @@ const Login = () => {
           Need an account? <Link to='/signup'>Sign Up</Link>
         </div>
       </div>
+      <ToastContainer />
     </Container>
   );
 };

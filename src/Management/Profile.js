@@ -42,46 +42,43 @@ export const Profile = () => {
         <Row className='mt-4'>
           <Card className='connect-row'>
             <Card.Body>
-              <div className='d-flex justify-content-center mb-2 mt-3'>
+              <div className='d-flex flex-column align-items-center mb-2 mt-3'>
                 <img
                   src={user.avatar_url}
                   alt='profile avatar'
-                  className='profile-avatar'
+                  className='profile-avatar mb-2'
                 />
-              </div>
-              <div className='d-flex justify-content-center'>
                 <h2>{user.name}</h2>
-              </div>
-              <div className='d-flex justify-content-center mb-2'>
                 <h6>{user.email}</h6>
-              </div>
-              <div className='d-flex justify-content-center mb-2'>
-                <i className='fas fa-user-edit' onClick={handleShow}></i>
+                <i
+                  className='fas fa-user-edit mt-2'
+                  onClick={handleShow}
+                  style={{ cursor: 'pointer' }}
+                ></i>
               </div>
               <EditProfileModal user={user} show={show} setShow={setShow} />
             </Card.Body>
           </Card>
         </Row>
-        {profiles &&
-          profiles.map((profile, key) => (
-            <ConnectedProfile profile={profile} key={key} />
-          ))}
-        {profiles && (
-          <div className='d-flex justify-content-center mb-2'>
-            <h6>
-              {profiles.length} connected
-              {profiles.length > 1 ? ' profiles' : ' profile'}
-            </h6>
+        {!profiles || profiles.length === 0 ? (
+          <div className='d-flex justify-content-center mb-3'>
+            <Link to='/connect'>
+              <Button>GET STARTED</Button>
+            </Link>
           </div>
-        )}
-        {!profiles ||
-          (profiles.length === 0 && (
-            <div className='d-flex justify-content-center mb-3'>
-              <Link to='/connect'>
-                <Button>GET STARTED</Button>
-              </Link>
+        ) : (
+          <>
+            {profiles.map((profile, key) => (
+              <ConnectedProfile profile={profile} key={key} />
+            ))}
+            <div className='d-flex justify-content-center mb-2'>
+              <h6>
+                {profiles.length} connected
+                {profiles.length > 1 ? ' profiles' : ' profile'}
+              </h6>
             </div>
-          ))}
+          </>
+        )}
       </Col>
     )
   );
