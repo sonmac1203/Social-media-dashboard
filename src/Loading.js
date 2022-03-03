@@ -8,7 +8,7 @@ const Loading = () => {
       <Spinner animation='grow' variant='dark' className='me-2' key={i} />
     );
   }
-  return <>{spinners}</>;
+  return spinners;
 };
 
 export default Loading;
